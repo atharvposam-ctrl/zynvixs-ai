@@ -1,7 +1,8 @@
+import { CareerRecommendations, CareerPageFooter } from "../CareerRecommendations";
 import { useEffect, useState } from "react";
 import { call } from "../Workflows";
 import { type Row, parse, useRows, Status, ModelNotice } from "./shared";
-export function InterviewStudio() {
+export function InterviewStudio({navigate}:{navigate:(page:string)=>void}) {
   const state = useRows("interviews"),
     [resumes, setResumes] = useState<Row[]>([]),
     [jobs, setJobs] = useState<Row[]>([]),
@@ -35,9 +36,14 @@ export function InterviewStudio() {
           an AI practice assessment, not a hiring prediction.
         </p>
       </div>
+      <CareerRecommendations kind="interview" context={resumes.find(r=>r.id===resume)?.content || ""} busy={busy} onChoose={r=>{
+        setRole(r.title);
+        document.getElementById('interview-practice-setup')?.scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
+        document.querySelector<HTMLInputElement>('#interview-practice-setup input')?.focus({preventScroll:true});
+      }} />
       <ModelNotice />
       <Status state={state} />
-      <form
+      <form id="interview-practice-setup"
         onSubmit={async (e) => {
           e.preventDefault();
           setBusy(true);
@@ -232,6 +238,7 @@ export function InterviewStudio() {
           )}
         </article>
       ))}
+      <CareerPageFooter navigate={navigate} />
     </section>
   );
 }

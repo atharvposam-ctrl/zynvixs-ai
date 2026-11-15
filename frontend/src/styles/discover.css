@@ -93,7 +93,7 @@
 .poster-sheet>i {display:block;height:5px;background:#c9d9ee;border-radius:3px;margin-top:8px;}.poster-sheet>i:nth-of-type(2) {width:70%;}
 .poster-sheet>span {display:flex;align-items:center;gap:3px;font-size:7px;margin-top:11px;}
 .poster-orb {position:absolute;right:0;bottom:10px;width:130px;height:130px;border:28px solid #ffffff17;border-radius:50%;}
-.poster-spark {position:absolute;top:5px;right:5px;color:#ffe197;}
+.poster-spark {position:absolute;top:5px;right:5px;color:inherit;}
 .poster-action {display:flex;align-items:center;justify-content:space-between;gap:8px;background:#ffffffed;color:#203652;padding:10px 12px;border-radius:25px;font-size:11px;font-weight:700;z-index:1;margin-top:12px;}
 .poster-labels {display:flex;flex-wrap:wrap;gap:6px;margin:13px 4px 9px;}.poster-labels span {border:1px solid var(--border-strong);border-radius:15px;padding:4px 9px;color:var(--text-2);font-size:10px;background:var(--surface);}
 .profile-featured-card>h4 {font-size:13px;font-weight:500;line-height:1.55;margin:0 5px;color:var(--text);}
@@ -115,3 +115,32 @@
 :root[data-theme] .career-shell .profile-poster {height:440px;min-height:440px;}
 .profile-poster .poster-art {min-height:100px;}
 :root[data-theme] .career-shell .banner-controls button:disabled {opacity:.4;cursor:default;box-shadow:none;}
+/* Neutral dashboard text; surfaces follow White and Black appearance consistently. */
+:root[data-theme="light"] {--text:#17191d;--text-2:#495463;}
+:root[data-theme] .career-shell .career-dashboard small,:root[data-theme] .career-shell .dashboard-heading>button,:root[data-theme] .career-shell .dashboard-stats svg,:root[data-theme] .career-shell .dashboard-tools svg,:root[data-theme] .career-shell .dashboard-tools span {color:var(--text);}
+:root[data-theme] .career-shell .dashboard-stats span {color:var(--text-2);}
+:root[data-theme] .career-shell .automation-setup {max-width:none;background:var(--surface);color:var(--text);border-color:var(--border);}
+:root[data-theme] .career-shell .automation-setup p,:root[data-theme] .career-shell .automation-setup li {color:var(--text-2);}
+:root[data-theme] .career-shell .automation-setup h2,:root[data-theme] .career-shell .automation-setup h3,:root[data-theme] .career-shell .automation-setup>small {color:var(--text);}
+:root[data-theme] .career-shell .automation-setup pre,:root[data-theme] .career-shell .automation-setup code {white-space:pre-wrap;overflow-wrap:anywhere;color:var(--text);background:var(--sunken);}
+.career-recommendations {margin:28px 0 36px;}
+.recommendation-heading {display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:12px;}
+.recommendation-heading>div {border-left:4px solid var(--accent);padding-left:14px;}.recommendation-heading h2 {margin:0 0 6px;font-size:26px;}.recommendation-heading p {margin:0;line-height:1.6;}
+:root[data-theme] .career-shell .recommendation-heading>button {border-radius:24px;display:flex;align-items:center;gap:10px;white-space:nowrap;color:var(--accent);background:var(--accent-soft);}
+.recommendation-method {font-size:12px;line-height:1.7;max-width:950px;}
+.recommendation-filters {display:flex;justify-content:space-between;align-items:center;gap:16px;margin:20px 0;}.recommendation-filters>div {display:flex;flex-wrap:wrap;gap:8px;}
+:root[data-theme] .career-shell .recommendation-filters button {padding:9px 15px;border-radius:24px;font-size:13px;}
+:root[data-theme] .career-shell .recommendation-filters button[aria-pressed="true"] {border-color:var(--accent);color:var(--accent);background:var(--accent-soft);}
+.recommendation-filters>input {max-width:270px;}
+.recommendation-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;}
+:root[data-theme] .career-shell .recommendation-card {padding:8px;margin:0;border:1px solid var(--border);border-radius:21px;display:flex;flex-direction:column;background:var(--sunken);overflow:hidden;}
+.recommendation-card-body {border-radius:14px;padding:20px;background:var(--surface);flex:1;}.recommendation-card h3 {margin:12px 0 8px;font-size:21px;}.recommendation-card p {font-size:14px;line-height:1.6;}.recommendation-symbol {display:grid;place-items:center;width:45px;height:45px;background:var(--accent-soft);color:var(--accent);border-radius:13px;}
+.recommendation-tags {display:flex;flex-wrap:wrap;gap:6px;padding-top:14px;margin-top:18px;border-top:1px solid var(--border);}.recommendation-tags span {padding:5px 9px;border-radius:8px;font-size:11px;background:var(--sunken);color:var(--text-2);}
+.recommendation-card .recommendation-reason {display:flex;align-items:flex-start;gap:6px;font-size:12px;margin:15px 12px 10px;}.recommendation-reason svg {flex-shrink:0;margin-top:3px;}
+.recommendation-card-action {display:flex;justify-content:space-between;align-items:center;gap:14px;padding:8px 10px;}.recommendation-card-action>span {font-size:11px;color:var(--text-2);}
+:root[data-theme] .career-shell .recommendation-card-action button {border-radius:23px;background:var(--primary);color:var(--on-primary);border-color:var(--primary);font-size:12px;display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.career-page-footer {margin-top:55px;padding:35px 28px;background:var(--accent-soft);border-top:1px solid var(--accent-line);border-radius:0 0 20px 20px;display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:30px;}
+.career-page-footer h3 {font-size:23px;margin:0 0 15px;}.career-page-footer p {font-size:12px;line-height:1.7;}.career-page-footer h4 {margin:0 0 16px;font-size:15px;}
+:root[data-theme] .career-shell .career-page-footer button {display:block;background:transparent;border:0;border-radius:5px;box-shadow:none;font-size:12px;padding:7px 0;color:var(--text-2);}.career-page-footer button:hover {text-decoration:underline;}
+@media(max-width:850px) {.recommendation-filters {align-items:stretch;flex-direction:column;}.recommendation-filters>input {max-width:none;}.career-page-footer {grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media(max-width:600px) {.recommendation-grid {grid-template-columns:1fr;}.recommendation-heading {align-items:flex-start;}.recommendation-heading h2 {font-size:23px;}.career-page-footer {grid-template-columns:1fr;padding:25px 18px;}.recommendation-card-action {flex-wrap:wrap;}}

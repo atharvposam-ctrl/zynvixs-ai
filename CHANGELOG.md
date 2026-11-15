@@ -2,6 +2,14 @@
 
 All notable changes to Zynvixs are listed here. Versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.1.0-beta.7] — 2026-11-16
+
+- Replace legacy decorative gold/yellow with theme-aware neutral text and borders; dashboard labels, actions and icons are black in White appearance and readable in Black appearance.
+- Fix Automation's outer surface, setup commands and checklist text to follow the selected appearance.
+- Add searchable role-based Interview Prep recommendations and learning templates ranked by saved profile/selected-resume keyword overlap, with visible explanations and general fallback options.
+- Interview recommendations populate the existing reviewed setup. Learning recommendations save editable, reusable plans with official resources or self-directed tasks and persistent progress.
+- Add grouped navigation footers to Interview Prep and Skills & Training, preserving all existing workflows and data.
+
 ## [1.1.0-beta.6] — 2026-11-16
 
 - Redesign Profile Builder with seven career tool tiles and four illustrated featured posters, preserving all existing profile and PDF workflows below the discovery area.

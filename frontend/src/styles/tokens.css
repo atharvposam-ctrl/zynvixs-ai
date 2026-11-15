@@ -1,5 +1,5 @@
 /* Zynvixs design tokens.
-   Identity: graphite and bone neutrals with a single antique-gold accent,
+   Identity: neutral surfaces with accessible blue interaction accents,
    a serif display face for the brand voice and a quiet grotesque for work. */
 
 :root {
@@ -55,10 +55,10 @@
   --hover: rgba(23, 24, 26, 0.05);
   --pressed: rgba(23, 24, 26, 0.09);
 
-  --accent: #86661c;
-  --accent-solid: #b08a3a;
-  --accent-soft: #f2ebd9;
-  --accent-line: #dccb9c;
+  --accent: #17191d;
+  --accent-solid: #0869df;
+  --accent-soft: #e5f1ff;
+  --accent-line: #9bc8ff;
 
   --primary: #17181a;
   --primary-hover: #2c2e31;
@@ -102,10 +102,10 @@
   --hover: rgba(255, 255, 255, 0.055);
   --pressed: rgba(255, 255, 255, 0.1);
 
-  --accent: #d6b56e;
-  --accent-solid: #c9a45c;
-  --accent-soft: rgba(214, 181, 110, 0.12);
-  --accent-line: rgba(214, 181, 110, 0.32);
+  --accent: #f0f3f9;
+  --accent-solid: #4287ee;
+  --accent-soft: rgba(66, 135, 238, 0.12);
+  --accent-line: rgba(66, 135, 238, 0.32);
 
   --primary: #ecebe7;
   --primary-hover: #ffffff;

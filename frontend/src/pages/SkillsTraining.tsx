@@ -1,14 +1,24 @@
+import { CareerRecommendations, CareerPageFooter, type Recommendation } from "../CareerRecommendations";
 import { useEffect, useState } from "react";
 import { call } from "../Workflows";
 import { type Row, parse, useRows, Status } from "./shared";
-export function LearningStudio() {
+export function LearningStudio({navigate}:{navigate:(page:string)=>void}) {
   const state = useRows("learning"),
     [resumes, setResumes] = useState<Row[]>([]),
     [jobs, setJobs] = useState<Row[]>([]),
     [resume, setResume] = useState(""),
     [job, setJob] = useState(""),
     [busy, setBusy] = useState(false),
-    [goal, setGoal] = useState("");
+    [goal, setGoal] = useState(""),
+    [pendingPlan, setPendingPlan] = useState("");
+  useEffect(()=>{if(pendingPlan && state.rows.some(r=>r.id===pendingPlan)){document.getElementById("learning-"+pendingPlan)?.scrollIntoView({block:"start",behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"instant":"smooth"});setPendingPlan("");}},[state.rows,pendingPlan]);
+  async function addRecommendation(r:Recommendation) {
+    const existing=state.rows.find(row=>parse(row)?.recommendation_id===r.id);
+    if(existing){setPendingPlan(existing.id);return;}
+    setBusy(true);state.setError("");
+    try {const row=await call("career/learning","POST",{title:r.title,resume_id:resume || undefined,content:JSON.stringify({recommendation_id:r.id,method:"Local practice template selected by you. Suggestions use keyword overlap with your profile and selected resume; progress is self-reported.",lessons:[{skill:r.title,activity:r.activity,url:r.url||"",resource_title:r.resource||"Your practice evidence",complete:false,practice_notes:""}]})});await state.load();setPendingPlan(row.id);}
+    catch(e){state.setError(String(e));}finally{setBusy(false);}
+  }
   useEffect(() => {
     void Promise.all([
       call("career/resumes"),
@@ -46,6 +56,7 @@ export function LearningStudio() {
           own lesson checkboxes, not certified proficiency.
         </p>
       </div>
+      <CareerRecommendations kind="learning" context={resumes.find(r=>r.id===resume)?.content || ""} onChoose={r=>void addRecommendation(r)} busy={busy} savedIds={state.rows.map(r=>parse(r)?.recommendation_id).filter(Boolean)} />
       <Status state={state} />
       <form
         onSubmit={async (e) => {
@@ -163,6 +174,7 @@ export function LearningStudio() {
           <LearningPlan key={row.id} row={row} initial={plan} save={savePlan} />
         );
       })}
+      <CareerPageFooter navigate={navigate} />
     </section>
   );
 }
@@ -188,7 +200,7 @@ function LearningPlan({
   }
   const complete = plan.lessons.filter((l: any) => l.complete).length;
   return (
-    <article>
+    <article id={"learning-"+row.id} tabIndex={-1}>
       <h3>{row.title}</h3>
       <p>{plan.method}</p>
       <progress max={plan.lessons.length || 1} value={complete} />

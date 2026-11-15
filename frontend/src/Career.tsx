@@ -572,8 +572,8 @@ export default function Career() {
             {page === "Applications" && <ApplicationsBoard />}
             {page === "Profile Builder" && <><ProfileDiscovery navigate={(next) => { if (next === "Profile Builder") { document.querySelector<HTMLInputElement>('input[name="name"]')?.focus(); document.querySelector('.studio-workspace fieldset')?.scrollIntoView({ block: "start", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" }); } else setPage(next); }} /><ProfileEditor /></>}
             {page === "LinkedIn Optimizer" && <LinkedinStudio />}
-            {page === "Interview Prep" && <InterviewStudio />}
-            {page === "Skills & Training" && <LearningStudio />}
+            {page === "Interview Prep" && <InterviewStudio navigate={setPage} />}
+            {page === "Skills & Training" && <LearningStudio navigate={setPage} />}
             {page === "Email Agent" && <EmailStudio />}
             {page === "Settings" && <WorkspaceSettings navigate={setPage} />}
             {page === "Projects" && (

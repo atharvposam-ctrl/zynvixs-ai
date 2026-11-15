@@ -202,3 +202,17 @@ Verified with the production build, isolated Profile Builder persistence and PDF
 ![White and Black choices in Settings](docs/images/settings-appearance-light.png)
 
 The broader `scripts/check_studio_ui.py` regression also passed all 13 pages in both appearances at 80%/100% and mobile, including resume import/export, LinkedIn edits, interview missing-model recovery, learning progress, application history, projects and email setup/review gates. `scripts/check_career_banners_ui.py` passed Home banner navigation and controls. No real messages or applications were sent.
+
+## Recommendations, neutral text and Automation surfaces (beta.7)
+
+Career Dashboard decorative text/icons now use normal foreground colors: black in White appearance and light in Black appearance. Legacy gold decoration was replaced with semantic colors, including focus outlines and borders. Automation's outer panel, commands, checklist text and nested cards use the active theme rather than a fixed dark surface.
+
+Interview Prep and Skills & Training now include reference-inspired recommendation cards, Tech/Management/General filters, keyword search and View all controls. Ranking happens locally using the saved target role, skills, headline and selected resume. Each card explains keyword overlap or labels itself a general practice option; these are curated practice templates, not live opportunities or employer endorsements. Recommendations do not claim a skill gap or proficiency assessment. A profile-loading failure provides a retry and general options. Interview **Prepare practice** populates the actual target-role form for review; generating questions and feedback still requires a local model and selected resume. Learning **Add learning plan** saves an editable plan in SQLite; **View plan** reopens the existing template plan, and lesson progress survives reload. Official documentation links are external and open only when selected. Self-directed templates do not invent course providers or credentials.
+
+Both pages end with grouped links to real existing pages, with no simulated newsletter, employer logos or unsupported subscription controls. Existing profile, resume, chat, jobs, learning records and settings remain intact.
+
+Validation: production TypeScript/Vite build; 114 backend tests; all 13-page light/dark 80%/100% and mobile regression checks; targeted recommendation ranking/search/setup, missing-model behavior, saved learning plan/progress/reload, duplicate-plan avoidance, provider retry, footer navigation and computed dashboard/Automation colors. AI inference requires the user's configured model; no real messages or applications were sent.
+
+![Role-based practice recommendations — controlled local profile](docs/images/interview-recommendations-light.png)
+
+![Automation in White appearance](docs/images/automation-theme-light.png)
