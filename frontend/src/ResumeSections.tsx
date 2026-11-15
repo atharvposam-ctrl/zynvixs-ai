@@ -3,9 +3,11 @@ import { Markdown } from "./components/Markdown";
 export function ResumeSections({
   text,
   onChange,
+  showPreview = true,
 }: {
   text: string;
   onChange: (text: string) => void;
+  showPreview?: boolean;
 }) {
   function parse(source: string) {
     const chunks = source.split(/(?=^#{1,3}\s)/m).filter((x) => x.trim());
@@ -98,10 +100,14 @@ export function ResumeSections({
       >
         Add resume section
       </button>
-      <h3>Document preview</h3>
-      <div className="resume-preview">
-        <Markdown text={text} />
-      </div>
+      {showPreview && (
+        <>
+          <h3>Document preview</h3>
+          <div className="resume-preview">
+            <Markdown text={text} />
+          </div>
+        </>
+      )}
     </details>
   );
 }

@@ -12,12 +12,18 @@ export function PdfResumePreview({
   text,
   stale = false,
   revealRequest = 0,
+  previewId = "profile-resume-pdf",
+  staleMessage,
+  onEdit,
 }: {
   id: string;
   title: string;
   text: string;
   stale?: boolean;
   revealRequest?: number;
+  previewId?: string;
+  staleMessage?: string;
+  onEdit?: () => void;
 }) {
   const [pdf, setPdf] = useState<PDFDocumentProxy | null>(null),
     [url, setUrl] = useState(""),
@@ -131,7 +137,7 @@ export function PdfResumePreview({
     <section
       ref={section}
       className="pdf-resume-panel"
-      id="profile-resume-pdf"
+      id={previewId}
       aria-label="Resume PDF preview"
       data-pdf-ready={
         !loading && !rendering && !!pdf && !error && renderedPage === page
@@ -145,8 +151,8 @@ export function PdfResumePreview({
       </p>
       {stale && (
         <p role="status" className="connection-note">
-          Your information has changed. Click Save info & preview resume PDF
-          again to create and download an updated version.
+          {staleMessage ||
+            "Your information has changed. Click Save info & preview resume PDF again to create and download an updated version."}
         </p>
       )}
       {loading && <p role="status">Creating PDF preview…</p>}
@@ -191,12 +197,14 @@ export function PdfResumePreview({
         <button
           type="button"
           onClick={() =>
-            document
-              .getElementById("profile-resume-form")
-              ?.scrollIntoView({ block: "start" })
+            onEdit
+              ? onEdit()
+              : document
+                  .getElementById("profile-resume-form")
+                  ?.scrollIntoView({ block: "start" })
           }
         >
-          Edit your information
+          {onEdit ? "Edit resume draft" : "Edit your information"}
         </button>
         <button
           type="button"

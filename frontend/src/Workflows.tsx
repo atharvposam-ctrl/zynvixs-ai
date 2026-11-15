@@ -8,13 +8,20 @@ export type Item = {
   due: string;
   status?: string;
   job_id?: string;
+  metadata?: Record<string, unknown>;
 };
-export async function call(path: string, method = "GET", body?: unknown) {
+export async function call(
+  path: string,
+  method = "GET",
+  body?: unknown,
+  signal?: AbortSignal,
+) {
   const form = body instanceof FormData;
   let r: Response;
   try {
     r = await fetch("/api/" + path, {
       method,
+      signal,
       headers: form ? {} : { "Content-Type": "application/json" },
       body: body ? (form ? body : JSON.stringify(body)) : undefined,
     });
@@ -36,7 +43,13 @@ export async function call(path: string, method = "GET", body?: unknown) {
   }
   return r.json();
 }
-export function ResumeLibrary({ onUse }: { onUse: (text: string) => void }) {
+export function ResumeLibrary({
+  onUse,
+  onSelect,
+}: {
+  onUse: (text: string) => void;
+  onSelect?: (row: Item) => void;
+}) {
   const [rows, setRows] = useState<Item[]>([]),
     [active, setActive] = useState(""),
     [error, setError] = useState(""),
@@ -53,13 +66,19 @@ export function ResumeLibrary({ onUse }: { onUse: (text: string) => void }) {
   }
   useEffect(() => {
     void load();
+    const refresh = () => void load();
+    window.addEventListener("resume-changed", refresh);
+    return () => window.removeEventListener("resume-changed", refresh);
   }, []);
   async function select(id: string) {
     try {
       await call("career/actions/active-resume", "PUT", { id });
       setActive(id);
       const selected = rows.find((r) => r.id === id);
-      if (selected) onUse(selected.content);
+      if (selected) {
+        onUse(selected.content);
+        onSelect?.(selected);
+      }
       window.dispatchEvent(new Event("resume-changed"));
     } catch (e) {
       setError(String(e));
@@ -93,6 +112,7 @@ export function ResumeLibrary({ onUse }: { onUse: (text: string) => void }) {
               await load();
               await select(row.id);
               onUse(row.content);
+              onSelect?.(row);
             } catch (e) {
               setError(String(e));
             } finally {

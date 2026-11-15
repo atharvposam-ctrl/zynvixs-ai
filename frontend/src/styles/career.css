@@ -1341,3 +1341,296 @@
     flex-direction: column;
   }
 }
+/* Resume Studio: balanced editor and real-PDF output, aligned side by side. */
+.resume-studio-workspace {
+  width: 100%;
+  max-width: none;
+}
+.resume-studio-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  border-bottom: 1px solid #454638;
+  padding: 0 0 20px;
+  margin-bottom: 24px;
+}
+.resume-studio-heading small {
+  color: #d6b56e;
+  letter-spacing: 1.4px;
+}
+.resume-studio-heading h2 {
+  font-family: "Instrument Serif", serif;
+  font-size: 36px;
+  font-weight: 400;
+  margin: 10px 0;
+}
+.resume-studio-heading p {
+  color: #b8baad;
+  margin: 0;
+  line-height: 1.6;
+}
+.studio-local-tag {
+  border: 1px solid #585a4c;
+  border-radius: 20px;
+  padding: 7px 12px;
+  white-space: nowrap;
+  font-size: 12px;
+}
+.resume-workbench {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  gap: 24px;
+  align-items: start;
+}
+.resume-input-panel,
+.resume-output-panel {
+  border: 1px solid #494b3f;
+  border-radius: 16px;
+  background: #191a17;
+  padding: 22px;
+  min-width: 0;
+}
+.resume-input-panel > h3,
+.resume-output-heading h3 {
+  margin: 0 0 15px;
+  font-size: 19px;
+}
+.resume-input-panel form {
+  margin: 18px 0;
+}
+.resume-input-panel textarea {
+  min-height: 170px;
+  resize: vertical;
+}
+.resume-input-panel textarea[aria-label="Resume source information"] {
+  min-height: 240px;
+}
+.resume-input-panel select {
+  width: 100%;
+}
+.resume-input-panel .length-help {
+  font-size: 13px;
+  line-height: 1.7;
+  color: #b8baad;
+  margin: 0;
+}
+.resume-generation-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.resume-generation-actions > button:first-child {
+  background: #d6b56e;
+  color: #181912;
+  border-color: #d6b56e;
+}
+.resume-output-panel {
+  position: sticky;
+  top: 15px;
+}
+.resume-output-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  border-bottom: 1px solid #3e4034;
+  margin-bottom: 15px;
+}
+.resume-output-heading span {
+  font-size: 12px;
+  color: #d6b56e;
+}
+.resume-output-panel .pdf-resume-panel {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  scroll-margin-top: 0;
+}
+.resume-output-panel .pdf-resume-panel > small {
+  display: none;
+}
+.resume-output-panel .pdf-resume-panel h2 {
+  font-family: "Geist Variable", sans-serif;
+  font-size: 19px;
+  line-height: 1.5;
+  margin: 15px 0;
+}
+.resume-output-panel .pdf-resume-panel > p,
+.output-length-note {
+  font-size: 13px;
+  color: #b9bbae;
+  line-height: 1.6;
+}
+.resume-output-panel .pdf-canvas-wrap {
+  padding: 10px;
+  max-height: 68vh;
+}
+.resume-output-panel .pdf-toolbar {
+  gap: 8px;
+  justify-content: space-between;
+}
+.resume-output-panel .pdf-toolbar button {
+  padding: 8px 10px;
+  font-size: 12px;
+}
+.resume-output-panel .pdf-download-actions {
+  gap: 9px;
+}
+.resume-output-panel .pdf-download-actions button {
+  font-size: 13px;
+  padding: 10px 12px;
+}
+.resume-output-empty {
+  min-height: 560px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 30px;
+}
+.resume-output-empty p {
+  max-width: 370px;
+  color: #b9bbae;
+  line-height: 1.8;
+}
+.empty-paper {
+  height: 180px;
+  width: 130px;
+  border: 1px solid #66634e;
+  border-radius: 7px;
+  background: #24251e;
+  display: grid;
+  place-items: center;
+  color: #d6b56e;
+  font-family: "Instrument Serif", serif;
+  font-size: 38px;
+  margin-bottom: 20px;
+}
+.studio-resume-library,
+.studio-draft-editor {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid #434537;
+}
+.resume-input-panel summary {
+  cursor: pointer;
+  font-weight: 600;
+  padding: 10px 0;
+}
+.resume-input-panel .workflow-panel {
+  padding: 12px;
+}
+.resume-input-panel article {
+  padding: 15px;
+}
+.resume-input-panel a {
+  color: #d6b56e;
+}
+.career-page:has(.resume-studio-workspace) {
+  padding: 25px 28px;
+}
+.career-page:has(.resume-studio-workspace) > h1 {
+  margin: 0 0 22px;
+}
+.home-content > .thread {
+  height: 100%;
+  overflow: auto;
+}
+.home-content .thread-inner,
+.embedded-chat .thread-inner {
+  width: 100%;
+  max-width: 1000px;
+  padding: 22px 32px 35px;
+}
+.home-composer {
+  width: 100%;
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 16px 32px 20px;
+}
+.home-composer .composer-wrap {
+  max-width: 100%;
+  width: 100%;
+}
+.home-composer .composer {
+  min-height: 110px;
+}
+[data-theme="light"] .resume-input-panel,
+[data-theme="light"] .resume-output-panel {
+  background: #fffef9;
+  border-color: #c5c6b6;
+}
+[data-theme="light"] .length-help,
+[data-theme="light"] .resume-studio-heading p,
+[data-theme="light"] .output-length-note,
+[data-theme="light"] .resume-output-empty p,
+[data-theme="light"] .resume-output-panel .pdf-resume-panel > p {
+  color: #505344;
+}
+[data-theme="light"] .resume-output-heading span,
+[data-theme="light"] .resume-studio-heading small,
+[data-theme="light"] .resume-input-panel a {
+  color: #806018;
+}
+@media (max-width: 1100px) {
+  .resume-workbench {
+    grid-template-columns: 1fr;
+  }
+  .resume-output-panel {
+    position: static;
+  }
+  .resume-output-empty {
+    min-height: 320px;
+  }
+  .resume-output-panel .pdf-canvas-wrap {
+    max-height: 700px;
+  }
+}
+@media (max-width: 700px) {
+  .career-page:has(.resume-studio-workspace) {
+    padding: 16px;
+  }
+  .resume-input-panel,
+  .resume-output-panel {
+    padding: 16px;
+  }
+  .resume-studio-heading h2 {
+    font-size: 28px;
+  }
+  .resume-studio-heading {
+    flex-direction: column;
+  }
+  .home-content .thread-inner,
+  .embedded-chat .thread-inner {
+    padding: 18px 14px 25px;
+  }
+  .home-composer {
+    padding: 12px;
+  }
+  .resume-workbench {
+    gap: 16px;
+  }
+}
+.home-content .thread-inner,
+.embedded-chat .thread-inner {
+  max-width: 1060px;
+}
+.resume-page-title {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+@media (min-width: 1101px) {
+  .resume-output-panel .pdf-canvas-wrap {
+    max-height: clamp(220px, calc(100dvh - 560px), 620px);
+  }
+}

@@ -555,7 +555,15 @@ export default function Career() {
           </div>
         ) : (
           <section className="career-page">
-            {page !== "Career Dashboard" && <h1>{page}</h1>}
+            {page !== "Career Dashboard" && (
+              <h1
+                className={
+                  page === "Resume Studio" ? "resume-page-title" : undefined
+                }
+              >
+                {page}
+              </h1>
+            )}
             {page === "Resume Studio" && <ResumeBuilder />}
             {page === "Automation" && <AutomationSetup />}
             {page === "Applications" && <ApplicationsBoard />}
@@ -697,7 +705,7 @@ export default function Career() {
           </section>
         )}
       </main>
-      {page === "Home" && (
+      {page === "Home" && !store.messages.length && !store.streaming && (
         <aside className="career-summary">
           <h2>Your career at a glance</h2>
           <article>

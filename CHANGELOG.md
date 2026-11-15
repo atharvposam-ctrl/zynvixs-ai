@@ -2,6 +2,13 @@
 
 All notable changes to Zynvixs are listed here. Versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.1.0-beta.4] — 2026-11-16
+
+- Place Resume Studio inputs and editable text on the left and the actual saved PDF output on the right, with responsive stacked panels on mobile.
+- Add 1–2, 4–5 and 12-page targets that affect AI instructions, context-aware generation budgets and PDF typography. Show actual pages; never pad or silently truncate supplied facts.
+- Refresh the PDF after edits and saved-resume selection; support cancelling generation without saving partial output.
+- Align the active chat thread with its composer and hide the welcome career summary during conversations.
+
 ## [1.1.0-beta.3] — 2026-11-16
 
 - Add Profile Builder → Save info & preview resume PDF → Download resume PDF.

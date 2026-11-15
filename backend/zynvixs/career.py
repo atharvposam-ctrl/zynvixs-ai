@@ -4,6 +4,8 @@ import json
 import uuid
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
+from typing import Literal
+from fastapi import Request
 from . import db
 
 router = APIRouter(prefix="/api/career")
@@ -184,10 +186,11 @@ class ResumeRequest(BaseModel):
     role: str = Field(min_length=1, max_length=200)
     facts: str = Field(min_length=20, max_length=20000)
     job_description: str = Field(default="", max_length=12000)
+    length_preference: Literal["1-2", "4-5", "12"] = "1-2"
 
 
 @router.post("/actions/resume")
-async def generate_resume(body: ResumeRequest):
+async def generate_resume(body: ResumeRequest, request: Request = None):
     from .runtime.manager import manager
     from .runtime.base import GenParams
 
@@ -212,6 +215,26 @@ async def generate_resume(body: ResumeRequest):
             + "\nOptional job description:\n"
             + body.job_description
         )
+        target = {
+            "1-2": "a concise 1–2 page resume",
+            "4-5": "a detailed 4–5 page CV",
+            "12": "an extended CV targeting 12 pages",
+        }[body.length_preference]
+        prompt += (
+            "\nLength preference: "
+            + target
+            + ". Use supplied facts only. Do not repeat content or invent facts to reach a page count. If the facts are insufficient, write a shorter honest document."
+        )
+        context = getattr(manager.loaded, "context_length", 16384)
+        available = context - (len(prompt) // 3) - 512
+        if available < 512:
+            raise HTTPException(
+                409,
+                "The selected model context is too small for this source. Shorten the input or increase context in Settings.",
+            )
+        budget = min(
+            {"1-2": 2400, "4-5": 4800, "12": 9000}[body.length_preference], available
+        )
         text = ""
         async for delta in manager.stream(
             [
@@ -221,13 +244,27 @@ async def generate_resume(body: ResumeRequest):
                 },
                 {"role": "user", "content": prompt},
             ],
-            GenParams(temperature=0.2, max_tokens=2400),
+            GenParams(temperature=0.2, max_tokens=budget),
         ):
+            if request is not None and await request.is_disconnected():
+                raise HTTPException(499, "Resume generation cancelled.")
             if delta.kind == "content":
                 text += delta.text
         if not text.strip():
             raise HTTPException(502, "The model returned no resume. Please retry.")
-        return create("resumes", Record(title=body.role + " — AI draft", content=text))
+        return create(
+            "resumes",
+            Record(
+                title=body.role + " — AI draft",
+                content=text,
+                metadata={
+                    "kind": "ai_resume",
+                    "target_role": body.role,
+                    "length_preference": body.length_preference,
+                    "output_token_limit": budget,
+                },
+            ),
+        )
 
 
 from fastapi import UploadFile, File
@@ -293,47 +330,16 @@ def export_resume(ident: str, format: str = "docx", inline: bool = False):
         mime = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     elif format == "pdf":
         try:
-            from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
-            from reportlab.lib.styles import getSampleStyleSheet
-            from reportlab.pdfbase import pdfmetrics
-            from reportlab.pdfbase.ttfonts import TTFont
+            from .resume_pdf import render
         except ImportError:
             raise HTTPException(
-                409, "PDF export requires reportlab. Run Setup.bat again."
+                409, "PDF export requires reportlab and pypdf. Run Setup.bat again."
             )
-        from pathlib import Path
-        from xml.sax.saxutils import escape
-
-        styles = getSampleStyleSheet()
-        font = next(
-            (
-                p
-                for p in [
-                    Path("C:/Windows/Fonts/arial.ttf"),
-                    Path("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"),
-                ]
-                if p.exists()
-            ),
-            None,
+        content = render(
+            record["content"],
+            record.get("metadata", {}).get("length_preference", "1-2"),
         )
-        if font:
-            if "ResumeFont" not in pdfmetrics.getRegisteredFontNames():
-                pdfmetrics.registerFont(TTFont("ResumeFont", str(font)))
-            for style in styles.byName.values():
-                style.fontName = "ResumeFont"
-        story = []
-        for line in record["content"].splitlines():
-            text = line.strip()
-            style = "BodyText"
-            if text.startswith("#"):
-                level = min(len(text) - len(text.lstrip("#")), 3)
-                style = "Heading" + str(level)
-                text = text.lstrip("#").strip()
-            elif text.startswith(("- ", "* ")):
-                text = "• " + text[2:]
-            story.append(Paragraph(escape(text) or " ", styles[style]))
-            story.append(Spacer(1, 4))
-        SimpleDocTemplate(buf).build(story)
+        buf.write(content)
         mime = "application/pdf"
     else:
         raise HTTPException(422, "Choose pdf or docx.")
