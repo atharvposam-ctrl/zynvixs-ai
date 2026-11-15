@@ -1,0 +1,2 @@
+# Optional browser worker. Install the Chromium browser separately.
+playwright>=1.56,<2

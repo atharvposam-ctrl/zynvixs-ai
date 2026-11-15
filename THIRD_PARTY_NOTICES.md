@@ -51,3 +51,9 @@ React and React DOM (MIT), Zustand (MIT), react-markdown, remark-gfm, remark-mat
 - **Brave Search API** (optional; user's own key) — https://brave.com/search/api/
 - **SearXNG** (optional; user's own instance) — AGPL-3.0, run separately by the user.
 - **Hugging Face** — model file downloads.
+
+## Resume PDF export
+ReportLab Toolkit: BSD licence, https://www.reportlab.com/opensource/ . Uses system fonts when available; no system font files are distributed.
+
+## Optional browser worker
+Playwright: Apache-2.0, https://github.com/microsoft/playwright . Chromium binaries are installed by the user and retain their upstream licences; not bundled.

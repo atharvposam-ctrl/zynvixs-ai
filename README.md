@@ -1,3 +1,5 @@
+> **Career workspace update:** see [startup, workflows, verification and limitations](CAREER_WORKSPACE.md). Includes AI resume drafts, public job retrieval, reviewed browser assistance and persistent workspace scaling.
+
 <p align="center"><img src="frontend/public/zynvixs.svg" width="56" alt=""></p>
 
 <h1 align="center">Zynvixs</h1>

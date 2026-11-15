@@ -20,6 +20,9 @@ from .research.net import internet_available
 from .retrieval import documents
 from .runtime.base import LoadError, RuntimeError_
 from .runtime.manager import manager
+from .career import router as career_router
+from .career_jobs import router as jobs_router
+from .career_browser import router as browser_router, shutdown as browser_shutdown
 
 
 def _reap_stale_engine() -> None:
@@ -45,6 +48,7 @@ async def lifespan(app: FastAPI):
     yield
     for task in list(RUNS.values()):
         task.cancel()
+    await browser_shutdown()
     await manager.shutdown()
     db.close()
 
@@ -57,8 +61,9 @@ app.add_middleware(
     allow_methods=["*"], allow_headers=["*"],
 )
 
-from .career import router as career_router
 app.include_router(career_router)
+app.include_router(jobs_router)
+app.include_router(browser_router)
 
 RUNS: dict[str, asyncio.Task[None]] = {}
 

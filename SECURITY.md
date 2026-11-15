@@ -30,3 +30,8 @@ Offline mode blocks both. There is no telemetry, analytics or crash reporting.
 ## Reporting a vulnerability
 
 Please do not open a public issue for security problems. Contact the maintainers privately through the repository's security advisory feature, with steps to reproduce. We aim to respond within 7 days.
+
+## Career workspace network actions
+Career job searches are explicitly initiated by the user and retrieve public listings from Remotive plus configured Greenhouse and Lever company boards. Resume/profile contents remain local: only role/keyword search text and public company board slugs are sent; ranking runs on this PC. Original listing links open externally. Offline mode blocks these API calls.
+
+The optional Playwright browser worker opens a separate, nonpersistent Chromium context on the user's PC. This is browser control, not full desktop control. Browser requests are restricted to public HTTPS addresses, with offline-mode checks. Web pages and portal sign-ins contact those websites directly. Text answers are only filled after user input. Passwords, file uploads, consent controls, MFA and CAPTCHA are manual. Submission requires a fresh form review and explicit approval; cross-domain actions or ambiguous submit controls require manual handling. A clicked submit control does not automatically mark an application submitted. Browser state is lost when the app closes; workflow notes remain in SQLite. Do not store passwords or secrets in workflow notes.

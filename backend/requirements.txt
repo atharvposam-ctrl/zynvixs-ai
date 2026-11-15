@@ -13,3 +13,5 @@ trafilatura==2.3.1
 ddgs==9.16.1
 # tests
 pytest==9.2.0
+# Resume PDF export (BSD licence)
+reportlab>=4.4,<5
