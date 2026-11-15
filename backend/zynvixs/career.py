@@ -17,6 +17,10 @@ KINDS = {
     "drafts",
     "automation",
     "jobs",
+    "linkedin",
+    "mail",
+    "mail_history",
+    "searches",
 }
 
 
@@ -30,6 +34,10 @@ class Record(BaseModel):
         pattern=r"^(draft|reviewing|submitted|interview|offer|rejected|withdrawn)$",
     )
     job_id: str = ""
+    resume_id: str = ""
+    project_id: str = ""
+    metadata: dict = Field(default_factory=dict)
+    submission_verified: bool = False
 
 
 def connection():
@@ -59,6 +67,27 @@ def records(kind: str):
 @router.post("/{kind}")
 def create(kind: str, record: Record):
     validate(kind)
+    if kind == "applications":
+        if record.status == "submitted" and not record.submission_verified:
+            raise HTTPException(
+                409, "Verify the employer confirmation before marking Submitted."
+            )
+        from datetime import datetime, timezone
+
+        record = record.model_copy(
+            update={
+                "metadata": {
+                    **record.metadata,
+                    "history": [
+                        {
+                            "from": "",
+                            "to": record.status,
+                            "at": datetime.now(timezone.utc).isoformat(),
+                        }
+                    ],
+                }
+            }
+        )
     ident = uuid.uuid4().hex
     connection().execute(
         "INSERT INTO career_records VALUES (?,?,?)",
@@ -70,6 +99,32 @@ def create(kind: str, record: Record):
 @router.put("/{kind}/{ident}")
 def update(kind: str, ident: str, record: Record):
     validate(kind)
+    if kind == "applications":
+        previous = next((r for r in records(kind) if r["id"] == ident), None)
+        if previous is None:
+            raise HTTPException(404, "Record not found")
+        if (
+            record.status == "submitted"
+            and previous.get("status") != "submitted"
+            and not record.submission_verified
+        ):
+            raise HTTPException(
+                409, "Verify the employer confirmation before marking Submitted."
+            )
+        from datetime import datetime, timezone
+
+        history = previous.get("metadata", {}).get("history", [])
+        if previous.get("status", "draft") != record.status:
+            history = history + [
+                {
+                    "from": previous.get("status", "draft"),
+                    "to": record.status,
+                    "at": datetime.now(timezone.utc).isoformat(),
+                }
+            ]
+        record = record.model_copy(
+            update={"metadata": {**record.metadata, "history": history}}
+        )
     if (
         connection()
         .execute(
@@ -187,9 +242,24 @@ def export_resume(ident: str, format: str = "docx"):
         from docx import Document
 
         doc = Document()
-        doc.add_heading(record["title"], 0)
+        from docx.shared import Inches, Pt
+
+        for section in doc.sections:
+            section.top_margin = section.bottom_margin = Inches(0.65)
+            section.left_margin = section.right_margin = Inches(0.75)
+        doc.styles["Normal"].font.name = "Calibri"
+        doc.styles["Normal"].font.size = Pt(11)
         for line in record["content"].splitlines():
-            doc.add_paragraph(line)
+            text = line.strip()
+            if text.startswith("#"):
+                level = min(len(text) - len(text.lstrip("#")), 3)
+                doc.add_heading(
+                    text.lstrip("#").strip(), level - 1 if level == 1 else level
+                )
+            elif text.startswith(("- ", "* ")):
+                doc.add_paragraph(text[2:], style="List Bullet")
+            else:
+                doc.add_paragraph(text)
         doc.save(buf)
         mime = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     elif format == "pdf":
@@ -223,9 +293,17 @@ def export_resume(ident: str, format: str = "docx"):
             for style in styles.byName.values():
                 style.fontName = "ResumeFont"
         story = []
-        for line in (record["title"] + "\n\n" + record["content"]).splitlines():
-            story.append(Paragraph(escape(line) or " ", styles["BodyText"]))
-            story.append(Spacer(1, 5))
+        for line in record["content"].splitlines():
+            text = line.strip()
+            style = "BodyText"
+            if text.startswith("#"):
+                level = min(len(text) - len(text.lstrip("#")), 3)
+                style = "Heading" + str(level)
+                text = text.lstrip("#").strip()
+            elif text.startswith(("- ", "* ")):
+                text = "• " + text[2:]
+            story.append(Paragraph(escape(text) or " ", styles[style]))
+            story.append(Spacer(1, 4))
         SimpleDocTemplate(buf).build(story)
         mime = "application/pdf"
     else:
@@ -264,3 +342,11 @@ def set_active_resume(body: dict):
 
 # Static action paths must take precedence over the legacy collection/id routes.
 router.routes.sort(key=lambda route: "{" in route.path)
+
+
+def current_profile():
+    """Newest approved value for each named section; retain older rows for export."""
+    latest = {}
+    for row in records("profile"):
+        latest.setdefault(row["title"].strip().casefold(), row)
+    return list(latest.values())

@@ -1,7 +1,18 @@
-import { JobSearch, ApplicationTracker } from "./Workflows";
+import { Toasts } from "./App";
+import {
+  ProfileEditor,
+  LinkedinStudio,
+  InterviewStudio,
+  LearningStudio,
+  ApplicationsBoard,
+  EmailStudio,
+  ProjectsWorkspace,
+  WorkspaceSettings,
+} from "./StudioPages";
+import { JobSearch } from "./Workflows";
 import { CareerDashboard, ResumeBuilder, AutomationSetup } from "./CareerTools";
 import { useEffect, useState } from "react";
-import App from "./App";
+
 import "./styles/career.css";
 import {
   Home,
@@ -42,17 +53,7 @@ const pages = [
   "Projects",
   "Settings",
 ];
-const collections: Record<string, string> = {
-  "Career Dashboard": "tasks",
-  "Profile Builder": "profile",
-  "Resume Studio": "resumes",
-  Applications: "applications",
-  "LinkedIn Optimizer": "drafts",
-  "Interview Prep": "interviews",
-  "Skills & Training": "learning",
-  "Email Agent": "drafts",
-  Automation: "automation",
-};
+const collections: Record<string, string> = { "Career Dashboard": "tasks" };
 type Row = {
   id: string;
   title: string;
@@ -99,11 +100,17 @@ export default function Career() {
     }
   });
   const store = useStore();
+  const [profileCompletion, setProfileCompletion] = useState(0);
+  const [archivedProjects, setArchivedProjects] = useState<string[]>([]);
   const [profile, setProfile] = useState<Row[]>([]),
     [tasks, setTasks] = useState<Row[]>([]),
     [chatSearch, setChatSearch] = useState(false);
   useEffect(() => {
-    void store.boot();
+    void store.boot().then(() => {
+      const id = new URLSearchParams(window.location.search).get("c");
+      if (id && useStore.getState().ready)
+        void useStore.getState().openConversation(id);
+    });
     void api("profile")
       .then(setProfile)
       .catch(() => {});
@@ -122,15 +129,99 @@ export default function Career() {
     }
   }, [page]);
   useEffect(() => {
-    document.documentElement.dataset.theme =
-      store.settings?.theme === "light" ? "light" : "dark";
-  }, [store.settings?.theme]);
+    if (!store.settings) return;
+    const s = store.settings;
+    const media = matchMedia("(prefers-color-scheme: dark)");
+    const apply = () => {
+      document.documentElement.dataset.theme =
+        s.theme === "light"
+          ? "light"
+          : s.theme === "system" && !media.matches
+            ? "light"
+            : "dark";
+    };
+    apply();
+    media.addEventListener("change", apply);
+    document.documentElement.dataset.density = s.density;
+    document.documentElement.style.setProperty(
+      "--scale",
+      String(s.font_scale / 100),
+    );
+    return () => media.removeEventListener("change", apply);
+  }, [store.settings]);
   useEffect(() => {
     const timer = window.setInterval(() => {
       if (document.visibilityState === "visible")
         void useStore.getState().refreshStatus();
     }, 5000);
     return () => window.clearInterval(timer);
+  }, []);
+  useEffect(() => {
+    const syncProfile = () => {
+      void fetch("/api/career-workspace/profile")
+        .then((r) => (r.ok ? r.json() : Promise.reject()))
+        .then((r) => setProfileCompletion(r.completion))
+        .catch(() => {});
+      void api("profile")
+        .then(setProfile)
+        .catch(() => {});
+    };
+    const syncProjects = () => {
+      void fetch("/api/career-workspace/projects")
+        .then((r) => (r.ok ? r.json() : Promise.reject()))
+        .then((rows) =>
+          setArchivedProjects(
+            rows.filter((r: any) => r.archived).map((r: any) => r.id),
+          ),
+        )
+        .catch(() => {});
+    };
+    syncProfile();
+    syncProjects();
+    window.addEventListener("profile-changed", syncProfile);
+    window.addEventListener("projects-changed", syncProjects);
+    return () => {
+      window.removeEventListener("profile-changed", syncProfile);
+      window.removeEventListener("projects-changed", syncProjects);
+    };
+  }, [page]);
+  useEffect(() => {
+    const key = (e: KeyboardEvent) => {
+      const mod = e.ctrlKey || e.metaKey;
+      if (mod && e.key.toLowerCase() === "b") {
+        e.preventDefault();
+        collapse((v) => !v);
+      } else if (mod && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        collapse(false);
+        setChatSearch(true);
+        setTimeout(
+          () =>
+            document
+              .querySelector<HTMLInputElement>(
+                '[aria-label="Search saved chats"]',
+              )
+              ?.focus(),
+          0,
+        );
+      } else if (mod && e.shiftKey && e.key.toLowerCase() === "o") {
+        e.preventDefault();
+        useStore.getState().newChat();
+        setPage("Home");
+      } else if (mod && e.key === ",") {
+        e.preventDefault();
+        useStore.getState().openSettings("general");
+      } else if (e.key === "Escape" && useStore.getState().streaming) {
+        void useStore.getState().stop();
+      } else if (mod && e.key === "/") {
+        e.preventDefault();
+        document
+          .querySelector<HTMLTextAreaElement>('[aria-label="Message"]')
+          ?.focus();
+      }
+    };
+    window.addEventListener("keydown", key);
+    return () => window.removeEventListener("keydown", key);
   }, []);
   const icons = [
     Home,
@@ -148,16 +239,10 @@ export default function Career() {
     Settings,
   ];
   const displayName =
-    profile.find((r) => /name/i.test(r.title))?.content.trim() || "there";
-  const completion = Math.round(
-    (["name", "skills", "experience", "preferences"].filter((k) =>
-      profile.some(
-        (r) => r.title.toLowerCase().includes(k) && r.content.trim(),
-      ),
-    ).length /
-      4) *
-      100,
-  );
+    profile
+      .find((r) => /^(full )?name$/i.test(r.title.trim()))
+      ?.content.trim() || "there";
+  const completion = profileCompletion;
   const kind = collections[page];
   async function refresh() {
     if (!kind) return;
@@ -243,9 +328,7 @@ export default function Career() {
                   className={page === p ? "selected" : ""}
                   key={p}
                   onClick={() => {
-                    if (p === "Settings") {
-                      store.openSettings("general");
-                    } else setPage(p);
+                    setPage(p);
                   }}
                 >
                   <Icon size={19} />
@@ -266,18 +349,20 @@ export default function Career() {
                 +
               </button>
             </small>
-            {store.projects.map((p) => (
-              <button
-                key={p.id}
-                onClick={() => {
-                  store.newChat(p.id);
-                  setPage("Chat");
-                }}
-              >
-                <Folder size={18} />
-                {p.name}
-              </button>
-            ))}
+            {store.projects
+              .filter((p) => !archivedProjects.includes(p.id))
+              .map((p) => (
+                <button
+                  key={p.id}
+                  onClick={() => {
+                    sessionStorage.setItem("zynvixs.project", p.id);
+                    setPage("Projects");
+                  }}
+                >
+                  <Folder size={18} />
+                  {p.name}
+                </button>
+              ))}
             <div className="nav-divider" />
             <small>RECENT CHATS</small>
             {store.conversations.slice(0, 5).map((c) => (
@@ -358,8 +443,8 @@ export default function Career() {
                 <ShieldCheck size={15} /> Private workspace
               </summary>
               Career records and chats are stored locally. Requested job
-              searches, browser sessions, model downloads and web research
-              contact external services.
+              searches, browser sessions, model downloads, web research and
+              explicit email actions contact external services.
             </details>
             <button
               aria-label="View tasks and workflow status"
@@ -372,6 +457,12 @@ export default function Career() {
             </button>
           </div>
         </header>
+        {store.bootError && (
+          <p role="alert">
+            {store.bootError}
+            <button onClick={() => void store.boot()}>Reconnect backend</button>
+          </p>
+        )}
         {page === "Home" ? (
           <>
             <div className="home-content">
@@ -452,14 +543,36 @@ export default function Career() {
               <Composer />
             </div>
           </>
-        ) : ["Chat", "Projects", "Settings"].includes(page) ? (
-          <App />
+        ) : page === "Chat" ? (
+          <div className="embedded-chat">
+            <Thread
+              onStarter={(text, mode) => {
+                store.setMode(mode);
+                void store.send(text);
+              }}
+            />
+            <Composer />
+          </div>
         ) : (
           <section className="career-page">
             {page !== "Career Dashboard" && <h1>{page}</h1>}
             {page === "Resume Studio" && <ResumeBuilder />}
             {page === "Automation" && <AutomationSetup />}
-            {page === "Applications" && <ApplicationTracker />}
+            {page === "Applications" && <ApplicationsBoard />}
+            {page === "Profile Builder" && <ProfileEditor />}
+            {page === "LinkedIn Optimizer" && <LinkedinStudio />}
+            {page === "Interview Prep" && <InterviewStudio />}
+            {page === "Skills & Training" && <LearningStudio />}
+            {page === "Email Agent" && <EmailStudio />}
+            {page === "Settings" && <WorkspaceSettings navigate={setPage} />}
+            {page === "Projects" && (
+              <ProjectsWorkspace
+                openConversation={(id) => {
+                  if (id) void store.openConversation(id);
+                  setPage("Home");
+                }}
+              />
+            )}
             {page === "Career Dashboard" && (
               <CareerDashboard
                 navigate={(p) => {
@@ -472,9 +585,8 @@ export default function Career() {
                 </p>
               </CareerDashboard>
             )}
-            {page === "Job Search" ? (
-              <JobSearch navigate={setPage} />
-            ) : (
+            {page === "Job Search" && <JobSearch navigate={setPage} />}
+            {page === "Career Dashboard" && (
               <>
                 <p>
                   {page === "Career Dashboard"
@@ -679,6 +791,7 @@ export default function Career() {
         </aside>
       )}
       <SettingsDialog />
+      <Toasts />
     </div>
   );
 }

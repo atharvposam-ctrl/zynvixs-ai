@@ -930,3 +930,304 @@
     max-width: 120px;
   }
 }
+.studio-workspace {
+  max-width: 1500px;
+  margin: 0 auto;
+}
+.studio-hero {
+  padding: 16px 0 24px;
+  border-bottom: 1px solid #3b3c34;
+  margin-bottom: 24px;
+}
+.studio-hero small {
+  color: #e6bc65;
+  letter-spacing: 1.8px;
+}
+.studio-hero h2 {
+  font-family: "Instrument Serif", serif;
+  font-size: 42px;
+  font-weight: 400;
+  margin: 12px 0;
+}
+.studio-hero p {
+  max-width: 850px;
+  line-height: 1.7;
+  color: #bfc1b6;
+}
+.studio-field-grid,
+.comparison-grid,
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+.studio-field-grid label:has(textarea) {
+  grid-column: 1/-1;
+}
+.studio-workspace fieldset {
+  border: 1px solid #494b40;
+  border-radius: 12px;
+  padding: 22px;
+  margin: 20px 0;
+  min-width: 0;
+}
+.studio-workspace legend {
+  padding: 0 10px;
+  color: #e6bc65;
+  font-weight: 600;
+}
+.workflow-panel,
+.connection-note {
+  padding: 22px;
+  border: 1px solid #484a3f;
+  border-radius: 14px;
+  margin: 22px 0;
+  background: #191a17;
+}
+.studio-workspace summary {
+  cursor: pointer;
+  padding: 10px 0;
+  font-weight: 600;
+}
+.studio-workspace p,
+.studio-workspace li {
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+.studio-workspace progress {
+  display: block;
+  width: 100%;
+  max-width: 500px;
+  accent-color: #d6b56e;
+  margin: 14px 0;
+}
+.studio-workspace form {
+  max-width: 1200px;
+}
+.studio-workspace textarea {
+  min-height: 150px;
+}
+.comparison-grid article {
+  min-width: 0;
+}
+.comparison-grid textarea {
+  min-height: 200px;
+}
+.studio-workspace details {
+  margin: 16px 0;
+}
+.practice-session details {
+  border-top: 1px solid #4a4a3e;
+  padding: 15px;
+}
+.kanban-board {
+  display: flex;
+  overflow-x: auto;
+  gap: 18px;
+  max-width: 100%;
+  padding: 12px 0 24px;
+}
+.kanban-board > section {
+  min-width: 260px;
+  width: 290px;
+  flex-shrink: 0;
+  padding: 14px;
+  background: #171815;
+  border: 1px solid #3b3d33;
+  border-radius: 12px;
+}
+.kanban-board > section > h3 {
+  text-transform: capitalize;
+  color: #e6bc65;
+}
+.kanban-board article {
+  padding: 16px;
+}
+.kanban-board article h3 {
+  font-size: 17px;
+}
+.kanban-board select {
+  width: 100%;
+}
+.studio-workspace pre {
+  white-space: pre-wrap;
+  background: #10110f;
+  padding: 18px;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+.studio-workspace .approval {
+  border: 1px solid #e6bc65;
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 20px;
+}
+.embedded-chat {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+.embedded-chat > .thread {
+  flex: 1;
+  min-height: 0;
+}
+.resume-preview {
+  background: #faf9f4;
+  color: #171815;
+  padding: 35px;
+  max-width: 850px;
+  margin: 20px auto;
+  font-family: Arial, sans-serif;
+}
+.resume-preview h1,
+.resume-preview h2,
+.resume-preview h3 {
+  color: #171815;
+}
+.resume-preview a {
+  color: #375477;
+}
+.career-page h1 {
+  font-family: "Instrument Serif", serif;
+  font-size: 38px;
+}
+.career-shell button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+@media (max-width: 850px) {
+  .studio-field-grid,
+  .comparison-grid,
+  .project-grid {
+    grid-template-columns: 1fr;
+  }
+  .studio-hero h2 {
+    font-size: 32px;
+  }
+  .studio-workspace fieldset,
+  .workflow-panel {
+    padding: 15px;
+  }
+  .resume-preview {
+    padding: 20px;
+  }
+}
+/* Light theme keeps the same gold identity while using readable paper surfaces. */
+[data-theme="light"] .career-shell {
+  background: #f4f3ee;
+  color: #202119;
+}
+[data-theme="light"] .career-nav,
+[data-theme="light"] .career-shell:not(.collapsed) .career-nav {
+  background: #ecebe4;
+  border-color: #c8c9bc;
+}
+[data-theme="light"] .career-shell article,
+[data-theme="light"] .career-shell button,
+[data-theme="light"] .workflow-panel,
+[data-theme="light"] .connection-note,
+[data-theme="light"] .kanban-board > section {
+  background: #fffef9;
+  color: #222319;
+  border-color: #c9c9b9;
+}
+[data-theme="light"] .career-shell p {
+  color: #4f5145;
+}
+[data-theme="light"] .career-shell input,
+[data-theme="light"] .career-shell textarea,
+[data-theme="light"] .career-shell select {
+  background: #fffef9;
+  color: #222319;
+  border-color: #9d9f8f;
+}
+[data-theme="light"] .career-shell a,
+[data-theme="light"] .studio-workspace legend,
+[data-theme="light"] .studio-hero small,
+[data-theme="light"] .career-welcome em {
+  color: #806018;
+}
+[data-theme="light"] .career-nav > button.selected {
+  background: #dfddca;
+  color: #202119;
+}
+[data-theme="light"] .home-composer .composer {
+  background: #fffef9;
+}
+[data-theme="light"] .home-composer textarea {
+  color: #222319;
+}
+[data-theme="light"] .progress-ring span {
+  background: #fffef9;
+}
+[data-theme="light"] .studio-workspace pre {
+  background: #e9e8df;
+  color: #202119;
+}
+[data-theme="light"] .matches-card button,
+[data-theme="light"] .dashboard-link {
+  color: #806018 !important;
+}
+[data-theme="light"] .career-nav footer small {
+  color: #525445;
+}
+[data-theme="light"] .career-welcome > b,
+[data-theme="light"] .career-nav header > b {
+  color: #806018;
+}
+.career-shell[data-density="compact"] .career-nav > button {
+  min-height: 30px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+.studio-workspace [role="alert"] {
+  border-left: 3px solid #d4a65a;
+  padding: 12px;
+  background: #302719;
+  color: #f2dcc0;
+}
+.studio-workspace input[type="checkbox"] {
+  width: auto;
+  accent-color: #d6b56e;
+}
+.studio-workspace .approval label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.studio-workspace button {
+  margin-right: 6px;
+}
+.studio-workspace .job-actions button {
+  margin-right: 0;
+}
+[data-density="compact"] .career-nav > button {
+  min-height: 30px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+.career-shell {
+  font-size: calc(15px * var(--scale, 1));
+}
+.career-nav > button,
+.career-page label {
+  font-size: calc(14px * var(--scale, 1));
+}
+.studio-workspace p,
+.studio-workspace li,
+.studio-workspace button,
+.studio-workspace input,
+.studio-workspace textarea {
+  font-size: calc(15px * var(--scale, 1));
+}
+.studio-hero h2 {
+  font-size: calc(42px * var(--scale, 1));
+}
+@media (max-width: 850px) {
+  .studio-hero h2 {
+    font-size: calc(32px * var(--scale, 1));
+  }
+}

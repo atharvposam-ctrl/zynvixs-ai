@@ -1,4 +1,4 @@
-> **Career workspace update:** see [startup, workflows, verification and limitations](CAREER_WORKSPACE.md). Includes AI resume drafts, public job retrieval, reviewed browser assistance and persistent workspace scaling.
+> **Career workspace update:** see [startup, studio workflows, verification and limitations](STUDIO_WORKFLOWS.md). Includes structured profiles, resume editing, public job retrieval, LinkedIn drafts, interview practice, learning plans, reviewed mail/browser actions and persistent workspace scaling.
 
 <p align="center"><img src="frontend/public/zynvixs.svg" width="56" alt=""></p>
 
@@ -11,7 +11,7 @@ Open-weight models, real reasoning tools, cited web research and document Q&amp;
   <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-blue"></a>
   <img alt="Platform: Windows 10/11" src="https://img.shields.io/badge/platform-Windows%2010%2F11-informational">
   <img alt="Runs offline" src="https://img.shields.io/badge/runs-100%25%20local-success">
-  <a href="https://github.com/techgptoffical/zynvixs/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/techgptoffical/zynvixs/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="https://github.com/atharvposam-ctrl/zynvixs-ai/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/atharvposam-ctrl/zynvixs-ai/actions/workflows/ci.yml/badge.svg"></a>
 </p>
 
 <p align="center"><img src="docs/images/chat-think-dark.png" width="860" alt="Zynvixs answering a loan EMI question in Think mode, with every figure computed by a calculator"></p>
@@ -52,7 +52,7 @@ Hard questions = our own 26-item maths / logic / code / format / Hindi set, gree
 
 ### Easy install (recommended)
 
-1. Download **`Zynvixs-v1.0.0-windows.zip`** from the [latest release](https://github.com/techgptoffical/zynvixs/releases/latest) and unzip it, for example to `C:\Zynvixs` or `D:\Zynvixs`.
+1. Download the current **[zynvixs-main.zip](https://github.com/atharvposam-ctrl/zynvixs-ai/raw/refs/heads/main/zynvixs-main.zip)** and unzip it, for example to `C:\Zynvixs` or `D:\Zynvixs`.
 2. Double-click **`Setup.bat`**. It installs everything inside that folder only (nothing system-wide) and tells you when it is done. It downloads about 600 MB, so it takes roughly 10–25 minutes depending on your internet speed.
 3. Double-click **`Zynvixs.bat`**. Your browser opens at `http://127.0.0.1:8765`.
 4. Go to **Settings → Models & hardware**, press **Download** on the model marked as recommended for your PC, and start chatting.
@@ -62,7 +62,7 @@ Closing the black Zynvixs window stops everything and frees the GPU.
 ### From source (developers)
 
 ```powershell
-git clone https://github.com/techgptoffical/zynvixs.git Zynvixs
+git clone https://github.com/atharvposam-ctrl/zynvixs-ai.git Zynvixs
 cd Zynvixs
 powershell -ExecutionPolicy Bypass -File scripts\setup.ps1      # add -Cpu on PCs without an NVIDIA GPU
 ```

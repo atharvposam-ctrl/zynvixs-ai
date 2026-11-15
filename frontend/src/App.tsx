@@ -9,7 +9,7 @@ import { Thread } from "./components/Thread";
 import { useStore } from "./store";
 import type { Mode } from "./types";
 
-function Toasts() {
+export function Toasts() {
   const toasts = useStore((s) => s.toasts);
   const dismiss = useStore((s) => s.dismissToast);
   if (!toasts.length) return null;

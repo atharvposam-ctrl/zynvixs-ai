@@ -595,7 +595,7 @@ function Privacy({ s, save }: { s: SettingsT; save: Save }) {
     <>
       <div className="set-group">
         <h4>Network</h4>
-        <Field name="Offline mode" help="Blocks Deep Research, model downloads, career job retrieval and browser automation requests. Chat, Think, documents and memory keep working.">
+        <Field name="Offline mode" help="Blocks Deep Research, model downloads, career job retrieval, browser sessions and IMAP/SMTP actions. Chat, Think, documents and memory keep working.">
           <Switch checked={s.offline_mode} label="Offline mode" onChange={(v) => void save({ offline_mode: v })} />
         </Field>
         <Field name="Web research" help="Allow Deep Research to search and read web pages.">
@@ -610,7 +610,7 @@ function Privacy({ s, save }: { s: SettingsT; save: Save }) {
         <div className="note">
           Every outbound request Zynvixs can make: (1) search queries to your chosen search provider and (2) the web pages
           Deep Research reads — both only during a Deep Research run; (3) model files from huggingface.co when you press
-          Download; (4) Remotive and configured Greenhouse/Lever public APIs during a career search; (5) websites loaded in your explicitly opened browser assistant session. Links you click open in your browser as normal.
+          Download; (4) Remotive and configured Greenhouse/Lever public APIs during a career search; (5) websites loaded in your explicitly opened browser assistant session. (6) configured IMAP/SMTP servers when you explicitly test, retrieve mail or approve a send. Links you click open in your browser as normal.
         </div>
       </div>
       <div className="set-group">

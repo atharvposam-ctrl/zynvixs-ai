@@ -125,7 +125,7 @@ def test_job_providers_partial_failure_and_tracking(monkeypatch):
     career.update(
         "applications",
         application["id"],
-        career.Record(title=application["title"], status="submitted", job_id=job["id"]),
+        career.Record(title=application["title"], status="submitted", job_id=job["id"], submission_verified=True),
     )
     assert career.records("applications")[0]["status"] == "submitted"
 

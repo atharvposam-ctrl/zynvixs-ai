@@ -20,7 +20,10 @@ from .research.net import internet_available
 from .retrieval import documents
 from .runtime.base import LoadError, RuntimeError_
 from .runtime.manager import manager
-from .career import router as career_router
+from .career_workspace import router as workspace_router
+from .career_mail import router as mail_router
+from .career_ai import router as career_ai_router
+from .career import router as career_router, records as career_records, KINDS as CAREER_KINDS
 from .career_jobs import router as jobs_router
 from .career_browser import router as browser_router, shutdown as browser_shutdown
 
@@ -62,6 +65,9 @@ app.add_middleware(
 )
 
 app.include_router(career_router)
+app.include_router(career_ai_router)
+app.include_router(workspace_router)
+app.include_router(mail_router)
 app.include_router(jobs_router)
 app.include_router(browser_router)
 
@@ -157,7 +163,10 @@ async def settings_get() -> dict[str, Any]:
 
 @app.patch("/api/settings")
 async def settings_patch(patch: dict[str, Any]) -> dict[str, Any]:
-    return db.update_settings(patch)
+    settings=db.update_settings(patch)
+    if settings.get("offline_mode"):
+        await browser_shutdown()
+    return settings
 
 
 @app.post("/api/settings/reset")
@@ -393,6 +402,8 @@ async def export_all() -> Response:
         "projects": db.list_projects(),
         "conversations": [{**c, "messages": db.list_messages(c["id"])} for c in convs],
         "documents": documents.list_for(None),
+        "career": {kind: career_records(kind) for kind in CAREER_KINDS},
+        "career_auxiliary": {table: db.query('SELECT * FROM '+table) for table in ['career_project_meta','career_document_projects','career_preferences','career_job_cache','career_mail_sends'] if db.one("SELECT name FROM sqlite_master WHERE type='table' AND name=?",(table,))},
     }
     return Response(json.dumps(payload, ensure_ascii=False, indent=2), media_type="application/json",
                     headers={"Content-Disposition": 'attachment; filename="zynvixs-export.json"'})

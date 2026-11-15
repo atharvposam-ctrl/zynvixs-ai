@@ -2,6 +2,16 @@
 
 All notable changes to Zynvixs are listed here. Versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.1.0-beta.2] — 2026-11-15
+
+- Replace generic career note forms with structured profile, LinkedIn, interview, learning, application, email, project and settings workflows.
+- Add section-based resume editing, preview and version lineage, while preserving PDF/DOCX export and the shared active resume.
+- Add reviewed IMAP/SMTP workflows with backend environment credentials, controlled local mail fixtures, outcome history and duplicate-attempt blocking.
+- Add application status history, verified-submission gating, Kanban/list views, project archiving/associations and career-inclusive workspace export.
+- Persist saved search criteria/cache, use current profile values for matching, and close browser sessions in offline mode.
+- Preserve existing chat, document, model, memory and keyboard behavior; check light/dark, 80%/100% and mobile layouts.
+- AI inference needs a configured local model. Real-provider email, OAuth-only accounts, scheduled/full-PC automation and complex portals have the limits documented in STUDIO_WORKFLOWS.md. No antivirus certification is claimed.
+
 ## [1.0.0] — 2026-11-13
 
 First public release.

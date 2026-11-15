@@ -11,6 +11,7 @@ from urllib.parse import quote, urlsplit
 import httpx
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
+from .career import current_profile
 from . import db
 from .career import create, records, Record, connection
 
@@ -278,7 +279,7 @@ async def search(body: Search):
     resume = find_resume(body.resume_id)
     async with httpx.AsyncClient(timeout=25, follow_redirects=False) as client:
         jobs, status = await retrieve(body, client)
-    profile = " ".join(r["content"] for r in records("profile"))
+    profile = " ".join(r["content"] for r in current_profile())
     combined = {}
     for j in jobs:
         key = (
@@ -334,6 +335,23 @@ async def search(body: Search):
             "INSERT OR REPLACE INTO career_job_cache VALUES (?,?)",
             (j["id"], json.dumps(j)),
         )
+    create(
+        "searches",
+        Record(
+            title=("Search: " + (body.role or body.keywords or "All configured jobs"))[
+                :300
+            ],
+            resume_id=body.resume_id,
+            content=json.dumps(
+                {
+                    "criteria": body.model_dump(),
+                    "result_ids": [j["id"] for j in filtered[:150]],
+                    "providers": status,
+                }
+            ),
+            metadata={"cached": True},
+        ),
+    )
     return {
         "jobs": filtered[:150],
         "providers": status,
@@ -383,6 +401,27 @@ def start_application(ident: str):
             title=job["title"] + " — " + job["company"],
             content=job["url"],
             job_id=ident,
+            resume_id=job.get("resume_id", ""),
             status="draft",
         ),
     )
+
+
+@router.get("/history/{ident}")
+def history(ident: str):
+    row = next((r for r in records("searches") if r["id"] == ident), None)
+    if not row:
+        raise HTTPException(404, "Search not found.")
+    data = json.loads(row["content"])
+    jobs = []
+    for job_id in data.get("result_ids", []):
+        try:
+            jobs.append(get_job(job_id))
+        except HTTPException:
+            pass
+    return {
+        "jobs": jobs,
+        "criteria": data.get("criteria", {}),
+        "providers": data.get("providers", []),
+        "cached": True,
+    }

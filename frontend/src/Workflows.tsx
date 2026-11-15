@@ -1,3 +1,4 @@
+import { ResumeSections } from "./ResumeSections";
 import { useEffect, useState } from "react";
 export type Item = {
   id: string;
@@ -20,7 +21,9 @@ export async function call(path: string, method = "GET", body?: unknown) {
     try {
       message = JSON.parse(message).detail;
     } catch {}
-    throw new Error(message);
+    throw new Error(
+      typeof message === "string" ? message : JSON.stringify(message),
+    );
   }
   return r.json();
 }
@@ -123,6 +126,7 @@ export function ResumeLibrary({ onUse }: { onUse: (text: string) => void }) {
               await call("career/resumes", "POST", {
                 ...edit,
                 title: edit.title + " — revised",
+                metadata: { parent_id: edit.id },
               });
               setEdit(null);
               await load();
@@ -132,6 +136,10 @@ export function ResumeLibrary({ onUse }: { onUse: (text: string) => void }) {
           }}
         >
           <h3>Edit and save a new version</h3>
+          <ResumeSections
+            text={edit.content}
+            onChange={(content) => setEdit({ ...edit, content })}
+          />
           <label>
             Title
             <input
@@ -143,6 +151,7 @@ export function ResumeLibrary({ onUse }: { onUse: (text: string) => void }) {
           <label>
             Resume text
             <textarea
+              aria-label="Resume text"
               value={edit.content}
               required
               onChange={(e) => setEdit({ ...edit, content: e.target.value })}
@@ -181,6 +190,7 @@ type Job = {
   };
 };
 export function JobSearch({ navigate }: { navigate: (p: string) => void }) {
+  const [history, setHistory] = useState<Item[]>([]);
   const [resumes, setResumes] = useState<Item[]>([]),
     [resume, setResume] = useState(""),
     [jobs, setJobs] = useState<Job[]>([]),
@@ -199,6 +209,7 @@ export function JobSearch({ navigate }: { navigate: (p: string) => void }) {
       setResumes(await call("career/resumes"));
       setResume((await call("career/actions/active-resume")).id);
       setSaved(await call("career/jobs"));
+      setHistory(await call("career/searches"));
     } catch (e) {
       setError(String(e));
     }
@@ -217,6 +228,7 @@ export function JobSearch({ navigate }: { navigate: (p: string) => void }) {
       });
       setJobs(r.jobs);
       setProviders(r.providers);
+      setHistory(await call("career/searches"));
     } catch (e) {
       setError(String(e));
     } finally {
@@ -489,6 +501,39 @@ export function JobSearch({ navigate }: { navigate: (p: string) => void }) {
           ))}
         </section>
       )}
+      <details>
+        <summary>Saved searches ({history.length})</summary>
+        <p>
+          Restoring a search reads cached listings, not live provider results.
+          Run Search again to refresh availability.
+        </p>
+        {history.map((row) => (
+          <article key={row.id}>
+            <h4>{row.title}</h4>
+            <button
+              onClick={async () => {
+                try {
+                  const r = await call("career-jobs/history/" + row.id);
+                  setJobs(r.jobs);
+                  setFilters(r.criteria);
+                  setResume(r.criteria.resume_id);
+                  await call("career/actions/active-resume", "PUT", {
+                    id: r.criteria.resume_id,
+                  });
+                  setProviders([]);
+                  setMessage(
+                    "Cached listings restored. They may be outdated; run a live search before applying.",
+                  );
+                } catch (e) {
+                  setError(String(e));
+                }
+              }}
+            >
+              Restore cached search
+            </button>
+          </article>
+        ))}
+      </details>
       <h3>Saved jobs</h3>
       {saved.length ? (
         saved.map((r) => {
@@ -508,80 +553,6 @@ export function JobSearch({ navigate }: { navigate: (p: string) => void }) {
       ) : (
         <p>No saved vacancies yet.</p>
       )}
-    </section>
-  );
-}
-export function ApplicationTracker() {
-  const [rows, setRows] = useState<Item[]>([]),
-    [error, setError] = useState("");
-  async function load() {
-    try {
-      setRows(await call("career/applications"));
-      setError("");
-    } catch (e) {
-      setError(String(e));
-    }
-  }
-  useEffect(() => {
-    void load();
-  }, []);
-  return (
-    <section>
-      <h2>Application pipeline</h2>
-      <p>
-        Opening a listing creates no submission. Change the status to Submitted
-        only after verifying the employer’s confirmation.
-      </p>
-      {error && (
-        <p role="alert">
-          {error}
-          <button onClick={() => void load()}>Retry</button>
-        </p>
-      )}
-      {!rows.length && <p>No tracked applications.</p>}
-      {rows.map((r) => (
-        <article key={r.id}>
-          <h3>{r.title}</h3>
-          <p style={{ whiteSpace: "pre-wrap" }}>{r.content}</p>
-          <label>
-            Verified status
-            <select
-              value={r.status || "draft"}
-              onChange={async (e) => {
-                const status = e.target.value;
-                if (
-                  status === "submitted" &&
-                  !confirm(
-                    "Have you verified that the employer received this application?",
-                  )
-                )
-                  return;
-                try {
-                  await call("career/applications/" + r.id, "PUT", {
-                    ...r,
-                    status,
-                  });
-                  await load();
-                } catch (x) {
-                  setError(String(x));
-                }
-              }}
-            >
-              {[
-                "draft",
-                "reviewing",
-                "submitted",
-                "interview",
-                "offer",
-                "rejected",
-                "withdrawn",
-              ].map((s) => (
-                <option key={s}>{s}</option>
-              ))}
-            </select>
-          </label>
-        </article>
-      ))}
     </section>
   );
 }
@@ -718,7 +689,10 @@ export function BrowserAssistant() {
                 const normalized = (s: string) =>
                   s.toLowerCase().replace(/[^a-z0-9]/g, "");
                 const stored = Object.fromEntries(
-                  profile.map((r) => [normalized(r.title), r.content]),
+                  profile
+                    .slice()
+                    .reverse()
+                    .map((r) => [normalized(r.title), r.content]),
                 );
                 const aliases: Record<string, string[]> = {
                   fullname: ["fullname", "name"],

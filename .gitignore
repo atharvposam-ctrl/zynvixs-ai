@@ -44,3 +44,6 @@ Thumbs.db
 /training/runs/*/adapter/
 /training/runs/pilot*/
 /unsloth_compiled_cache/
+
+# Isolated development checks and generated screenshots
+/work/

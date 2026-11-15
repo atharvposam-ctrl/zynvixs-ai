@@ -1,3 +1,5 @@
+import { ResumeSections } from "./ResumeSections";
+import { Markdown } from "./components/Markdown";
 import { ResumeLibrary, BrowserAssistant } from "./Workflows";
 import { useEffect, useState } from "react";
 import {
@@ -30,7 +32,9 @@ async function request(path: string, method = "GET", body?: unknown) {
     try {
       message = JSON.parse(message).detail;
     } catch {}
-    throw new Error(message);
+    throw new Error(
+      typeof message === "string" ? message : JSON.stringify(message),
+    );
   }
   return r.json();
 }
@@ -197,7 +201,15 @@ export function ResumeBuilder() {
   }, []);
   async function useProfile() {
     try {
-      const profile: Item[] = await request("profile");
+      const source: Item[] = await request("profile");
+      const profile = Array.from(
+        new Map(
+          source
+            .slice()
+            .reverse()
+            .map((r) => [r.title.trim().toLowerCase(), r]),
+        ).values(),
+      );
       if (!profile.length)
         throw new Error("Save your profile in Profile Builder first.");
       setFacts(profile.map((r) => r.title + ": " + r.content).join("\n\n"));
@@ -290,9 +302,20 @@ export function ResumeBuilder() {
       {result && (
         <article>
           <h3>Saved AI draft — review required</h3>
+          <ResumeSections
+            text={result.content}
+            onChange={(content) => setResult({ ...result, content })}
+          />
+          <details open>
+            <summary>Document preview</summary>
+            <div className="resume-preview">
+              <Markdown text={result.content} />
+            </div>
+          </details>
           <label>
             Editable draft
             <textarea
+              aria-label="Editable draft"
               value={result.content}
               onChange={(e) =>
                 setResult({ ...result, content: e.target.value })
@@ -305,6 +328,7 @@ export function ResumeBuilder() {
                 const saved = await request("resumes", "POST", {
                   ...result,
                   title: result.title + " — edited",
+                  metadata: { parent_id: result.id },
                 });
                 setResult(saved);
                 setError("");
