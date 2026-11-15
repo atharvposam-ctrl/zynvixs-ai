@@ -1,3 +1,5 @@
+> **New: Profile Builder → fill your information → Save info & preview resume PDF → Download resume PDF.** This formatting workflow works without an AI model.
+
 > **Career workspace update:** see [startup, studio workflows, verification and limitations](STUDIO_WORKFLOWS.md). Includes structured profiles, resume editing, public job retrieval, LinkedIn drafts, interview practice, learning plans, reviewed mail/browser actions and persistent workspace scaling.
 
 <p align="center"><img src="frontend/public/zynvixs.svg" width="56" alt=""></p>

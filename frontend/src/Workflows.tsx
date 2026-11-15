@@ -11,11 +11,20 @@ export type Item = {
 };
 export async function call(path: string, method = "GET", body?: unknown) {
   const form = body instanceof FormData;
-  const r = await fetch("/api/" + path, {
-    method,
-    headers: form ? {} : { "Content-Type": "application/json" },
-    body: body ? (form ? body : JSON.stringify(body)) : undefined,
-  });
+  let r: Response;
+  try {
+    r = await fetch("/api/" + path, {
+      method,
+      headers: form ? {} : { "Content-Type": "application/json" },
+      body: body ? (form ? body : JSON.stringify(body)) : undefined,
+    });
+  } catch (e) {
+    if (e instanceof TypeError)
+      throw new Error(
+        "Cannot reach the Zynvixs backend. Start or restart Zynvixs.bat from the updated folder, open http://127.0.0.1:8765, then retry. Your current form entries are kept on this page.",
+      );
+    throw e;
+  }
   if (!r.ok) {
     let message = await r.text();
     try {

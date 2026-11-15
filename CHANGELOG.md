@@ -2,6 +2,13 @@
 
 All notable changes to Zynvixs are listed here. Versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.1.0-beta.3] — 2026-11-16
+
+- Add Profile Builder → Save info & preview resume PDF → Download resume PDF.
+- Format only entered facts without requiring a language model; save each generated resume and select it for shared career workflows.
+- Render actual PDF bytes locally with PDF.js, with pagination, retry, download, edit protection and saved-version restore.
+- Preserve typed fields after connection failure/retry and explain how to restart the updated backend.
+
 ## [1.1.0-beta.2] — 2026-11-15
 
 - Replace generic career note forms with structured profile, LinkedIn, interview, learning, application, email, project and settings workflows.

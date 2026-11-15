@@ -57,3 +57,6 @@ ReportLab Toolkit: BSD licence, https://www.reportlab.com/opensource/ . Uses sys
 
 ## Optional browser worker
 Playwright: Apache-2.0, https://github.com/microsoft/playwright . Chromium binaries are installed by the user and retain their upstream licences; not bundled.
+
+## In-app PDF resume preview
+PDF.js (`pdfjs-dist`), Mozilla Foundation: Apache-2.0, https://github.com/mozilla/pdf.js . The worker is bundled locally; previewing a resume does not fetch code from a CDN.

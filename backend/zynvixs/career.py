@@ -262,7 +262,7 @@ async def import_resume(file: UploadFile = File(...)):
 
 
 @router.get("/resumes/{ident}/export")
-def export_resume(ident: str, format: str = "docx"):
+def export_resume(ident: str, format: str = "docx", inline: bool = False):
     record = next((r for r in records("resumes") if r["id"] == ident), None)
     if not record:
         raise HTTPException(404, "Resume not found.")
@@ -340,7 +340,9 @@ def export_resume(ident: str, format: str = "docx"):
     return Response(
         buf.getvalue(),
         media_type=mime,
-        headers={"Content-Disposition": f'attachment; filename="resume.{format}"'},
+        headers={
+            "Content-Disposition": f'{"inline" if inline else "attachment"}; filename="resume.{format}"'
+        },
     )
 
 
@@ -379,3 +381,57 @@ def current_profile():
     for row in records("profile"):
         latest.setdefault(row["title"].strip().casefold(), row)
     return list(latest.values())
+
+
+class ResumeInfo(BaseModel):
+    name: str = Field(min_length=1, max_length=150)
+    role: str = Field(min_length=1, max_length=150)
+    email: str = Field(default="", max_length=300)
+    phone: str = Field(default="", max_length=100)
+    location: str = Field(default="", max_length=300)
+    links: str = Field(default="", max_length=1000)
+    summary: str = Field(default="", max_length=4000)
+    education: str = Field(default="", max_length=8000)
+    experience: str = Field(default="", max_length=12000)
+    skills: str = Field(default="", max_length=4000)
+    projects: str = Field(default="", max_length=8000)
+    certifications: str = Field(default="", max_length=4000)
+
+
+@router.post("/actions/resume-from-info")
+def resume_from_info(body: ResumeInfo):
+    if not body.name.strip() or not body.role.strip():
+        raise HTTPException(422, "Enter your full name and target role.")
+    contact = " | ".join(
+        v.strip()
+        for v in [body.email, body.phone, body.location, body.links]
+        if v.strip()
+    )
+    lines = ["# " + body.name.strip(), body.role.strip()]
+    if contact:
+        lines.append(contact)
+    for key, label in [
+        ("summary", "Professional summary"),
+        ("experience", "Experience"),
+        ("education", "Education"),
+        ("skills", "Skills"),
+        ("projects", "Projects"),
+        ("certifications", "Certifications"),
+    ]:
+        value = getattr(body, key).strip()
+        if value:
+            lines.extend(["", "## " + label, value])
+    row = create(
+        "resumes",
+        Record(
+            title=(body.name.strip() + " — " + body.role.strip())[:300],
+            content="\n\n".join(lines),
+            metadata={"kind": "form_resume", "source_fields": body.model_dump()},
+        ),
+    )
+    set_active_resume({"id": row["id"]})
+    return row
+
+
+# Keep newly added named actions ahead of legacy /{kind}/{ident} routes.
+router.routes.sort(key=lambda route: "{" in route.path)

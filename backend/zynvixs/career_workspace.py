@@ -11,6 +11,8 @@ from .career_jobs import find_resume
 router = APIRouter(prefix="/api/career-workspace")
 PROFILE_FIELDS = {
     "name": "Name",
+    "target_role": "Resume target role",
+    "summary": "Professional summary",
     "email": "Email",
     "phone": "Phone",
     "location": "Location",
