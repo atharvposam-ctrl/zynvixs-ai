@@ -18,6 +18,15 @@ async def main():
                 viewport={"width": 1672, "height": 1050}, color_scheme="dark"
             )
             errors = []
+            http_errors = []
+            page.on(
+                "response",
+                lambda response: (
+                    http_errors.append(str(response.status) + " " + response.url)
+                    if response.status >= 500
+                    else None
+                ),
+            )
             page.on(
                 "pageerror",
                 lambda e: (errors.append(str(e)), print("JS ERROR", str(e))),
@@ -361,6 +370,7 @@ async def main():
                     path=str(shots / ("mobile-" + name.replace("/", "-") + ".png"))
                 )
             assert not errors, errors
+            assert not http_errors, http_errors
             await browser.close()
             print(
                 "PASS: all 13 pages in light/dark at 80/100%, mobile 390px, profile persistence, resume import/export, LinkedIn version edits, interview missing-model recovery, learning progress, application confirmation/history, project association, email missing credentials and send-review gate. No JS errors; no real messages or applications sent."

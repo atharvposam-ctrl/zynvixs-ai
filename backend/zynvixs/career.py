@@ -40,12 +40,41 @@ class Record(BaseModel):
     submission_verified: bool = False
 
 
+class _BufferedResult:
+    """Consume rows while holding the shared SQLite lock, not during rendering."""
+
+    def __init__(self, rows, rowcount):
+        self._rows = iter(rows)
+        self.rowcount = rowcount
+
+    def fetchone(self):
+        return next(self._rows, None)
+
+    def fetchall(self):
+        return list(self._rows)
+
+    def __iter__(self):
+        return self._rows
+
+
+class _CareerStore:
+    def execute(self, sql, params=()):
+        # Use the original store's lock too: baseline chat/settings queries share
+        # this connection. A cursor must not escape the lock with unread rows.
+        with db._lock:
+            cursor = db.conn().execute(sql, tuple(params))
+            rows = cursor.fetchall() if cursor.description else []
+            return _BufferedResult(rows, cursor.rowcount)
+
+
+_store = _CareerStore()
+
+
 def connection():
-    c = db.conn()
-    c.execute(
+    _store.execute(
         "CREATE TABLE IF NOT EXISTS career_records (id TEXT PRIMARY KEY, kind TEXT NOT NULL, payload TEXT NOT NULL)"
     )
-    return c
+    return _store
 
 
 def validate(kind):

@@ -470,3 +470,24 @@ def test_offline_setting_closes_browser_sessions(monkeypatch):
     monkeypatch.setattr(main, "browser_shutdown", shutdown)
     response = client.patch("/api/settings", json={"offline_mode": True})
     assert response.status_code == 200 and closed == [True]
+
+
+def test_parallel_career_reads_do_not_mix_or_corrupt_rows():
+    from concurrent.futures import ThreadPoolExecutor
+
+    kinds = ["profile", "tasks", "resumes"]
+    for kind in kinds:
+        career.create(kind, career.Record(title=kind, content=kind))
+    db.update_settings({"theme": "dark"})
+
+    def read(index):
+        kind = kinds[index % len(kinds)]
+        rows = career.records(kind)
+        assert (
+            len(rows) == 1 and rows[0]["title"] == kind and rows[0]["content"] == kind
+        )
+        assert db.get_settings()["theme"] == "dark"
+        return True
+
+    with ThreadPoolExecutor(max_workers=16) as pool:
+        assert all(pool.map(read, range(3000)))

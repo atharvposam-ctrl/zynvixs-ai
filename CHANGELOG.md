@@ -10,6 +10,7 @@ All notable changes to Zynvixs are listed here. Versions follow [Semantic Versio
 - Add application status history, verified-submission gating, Kanban/list views, project archiving/associations and career-inclusive workspace export.
 - Persist saved search criteria/cache, use current profile values for matching, and close browser sessions in offline mode.
 - Preserve existing chat, document, model, memory and keyboard behavior; check light/dark, 80%/100% and mobile layouts.
+- Serialize career queries using the existing SQLite lock and buffer query results before releasing it; verify parallel collection reads with a regression test.
 - AI inference needs a configured local model. Real-provider email, OAuth-only accounts, scheduled/full-PC automation and complex portals have the limits documented in STUDIO_WORKFLOWS.md. No antivirus certification is claimed.
 
 ## [1.0.0] — 2026-11-13
