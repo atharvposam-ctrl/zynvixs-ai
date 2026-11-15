@@ -1,3 +1,4 @@
+import { Moon, Sun, Monitor, Check } from "lucide-react";
 import { useState } from "react";
 import { call } from "../Workflows";
 import { useStore } from "../store";
@@ -8,7 +9,17 @@ export function WorkspaceSettings({
 }) {
   const store = useStore(),
     [message, setMessage] = useState(""),
-    [error, setError] = useState("");
+    [error, setError] = useState(""),
+    [savingTheme, setSavingTheme] = useState(false);
+  async function changeTheme(theme: "light" | "dark" | "system") {
+    setSavingTheme(true); setError(""); setMessage("");
+    try {
+      const settings = await call("settings", "PATCH", { theme });
+      useStore.setState({settings});
+      setMessage("Appearance saved. This choice applies across your workspace.");
+    } catch (e) { setError(String(e)); }
+    finally { setSavingTheme(false); }
+  }
   return (
     <section className="studio-workspace">
       <div className="studio-hero">
@@ -21,6 +32,22 @@ export function WorkspaceSettings({
       </div>
       {error && <p role="alert">{error}</p>}
       {message && <p role="status">{message}</p>}
+      <section className="workspace-appearance" aria-label="Workspace appearance">
+        <h3>Appearance</h3>
+        <p>Choose White or Black for the whole application. Your choice is saved on this workspace.</p>
+        <div className="appearance-choices">
+          {([
+            {id:"light", label:"White", note:"Bright surfaces and blue accents", icon:Sun},
+            {id:"dark", label:"Black", note:"Dark surfaces and blue accents", icon:Moon},
+            {id:"system", label:"System", note:"Follow your device appearance", icon:Monitor},
+          ] as const).map(t => <button key={t.id} className={`appearance-choice appearance-${t.id}`} aria-pressed={store.settings?.theme === t.id} disabled={savingTheme || !store.settings} onClick={() => void changeTheme(t.id)}>
+            <span className="appearance-swatch" aria-hidden="true"><i/><b/><b/></span>
+            <span><t.icon size={18}/><strong>{t.label}</strong>{store.settings?.theme === t.id && <Check size={17}/>}</span>
+            <small>{t.note}</small>
+          </button>)}
+        </div>
+        {savingTheme && <p role="status">Saving appearance…</p>}
+      </section>
       <div className="dashboard-tools">
         {[
           ["Models & hardware", "models"],

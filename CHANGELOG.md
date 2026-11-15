@@ -2,6 +2,13 @@
 
 All notable changes to Zynvixs are listed here. Versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.1.0-beta.6] — 2026-11-16
+
+- Redesign Profile Builder with seven career tool tiles and four illustrated featured posters, preserving all existing profile and PDF workflows below the discovery area.
+- Add prominent White, Black and System appearance cards directly in Settings. Persist changes through the backend and keep the previous appearance when saving fails.
+- Match the existing appearance dialog labels to White/Black, deepen the black palette and use a white main workspace in white appearance.
+- Keep equal poster heights, responsive horizontal scrolling, scroll-boundary controls and reduced-motion support.
+
 ## [1.1.0-beta.5] — 2026-11-16
 
 - Add a blue-and-white career discovery theme across the workspace, with rounded navigation, cards, forms and matching blue accents in dark appearance.

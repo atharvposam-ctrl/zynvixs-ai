@@ -107,7 +107,7 @@ function General({ s, save }: { s: SettingsT; save: Save }) {
         <h4>Appearance</h4>
         <Field name="Theme">
           <Choice value={s.theme} onChange={(theme) => void save({ theme })}
-            options={[{ id: "system", label: "System" }, { id: "light", label: "Light" }, { id: "dark", label: "Dark" }]} />
+            options={[{ id: "system", label: "System" }, { id: "light", label: "White" }, { id: "dark", label: "Black" }]} />
         </Field>
         <Field name="Density" help="Compact tightens spacing in the sidebar and conversation.">
           <Choice value={s.density} onChange={(density) => void save({ density })}

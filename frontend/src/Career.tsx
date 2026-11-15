@@ -1,3 +1,4 @@
+import { ProfileDiscovery } from "./ProfileDiscovery";
 import { CareerBanners } from "./CareerBanners";
 import { Toasts } from "./App";
 import {
@@ -569,7 +570,7 @@ export default function Career() {
             {page === "Resume Studio" && <ResumeBuilder />}
             {page === "Automation" && <AutomationSetup />}
             {page === "Applications" && <ApplicationsBoard />}
-            {page === "Profile Builder" && <><CareerBanners navigate={(next) => { if (next === "Profile Builder") { document.querySelector<HTMLInputElement>('input[name="name"]')?.focus(); document.querySelector('.studio-workspace fieldset')?.scrollIntoView({ block: "start", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" }); } else setPage(next); }} /><ProfileEditor /></>}
+            {page === "Profile Builder" && <><ProfileDiscovery navigate={(next) => { if (next === "Profile Builder") { document.querySelector<HTMLInputElement>('input[name="name"]')?.focus(); document.querySelector('.studio-workspace fieldset')?.scrollIntoView({ block: "start", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" }); } else setPage(next); }} /><ProfileEditor /></>}
             {page === "LinkedIn Optimizer" && <LinkedinStudio />}
             {page === "Interview Prep" && <InterviewStudio />}
             {page === "Skills & Training" && <LearningStudio />}

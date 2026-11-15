@@ -310,7 +310,7 @@ async def main():
             await page.get_by_role(
                 "button", name=re.compile("General appearance")
             ).click()
-            await page.get_by_role("radio", name="Light", exact=True).click()
+            await page.get_by_role("radio", name="White", exact=True).click()
             await page.wait_for_function(
                 "document.documentElement.dataset.theme === 'light'"
             )

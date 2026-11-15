@@ -186,3 +186,19 @@ Checks: production TypeScript/Vite build, 114 backend tests, Profile Builder per
 ![Profile discovery banners — dark appearance](docs/images/profile-discovery-dark.png)
 
 Broader regression check: `scripts/check_studio_ui.py` passed all 13 pages in light/dark at 80%/100%, mobile, profile persistence, resume import/export, LinkedIn edits, interview missing-model recovery, learning progress, application confirmation/history, project associations and email setup/review gates. No real messages or applications were sent.
+
+## Profile discovery and White / Black appearance (beta.6)
+
+Profile Builder now starts with a reference-inspired career discovery area: seven tool tiles and four equal-height illustrated posters for profile details, resume creation, AI profile marketing and interview practice. These navigate to real tools; profile actions focus the editable form. The existing saved profile, import suggestions and PDF workflow remain below. The artwork is original bundled CSS, not third-party advertisements or claimed job offers. On small screens the featured row scrolls with buttons or touch; arrow controls disable at the scroll boundaries. Decorative movement respects reduced motion.
+
+Open **Settings → Appearance** and select **White**, **Black** or **System**. White uses a white main workspace with a pale-blue sidebar; Black uses near-black surfaces with accessible light text. Both retain blue accents. Choices persist in existing backend settings and affect every page plus chat and dialogs. A failed save displays an error and keeps the previous theme. The general settings dialog has the same White/Black labels. No data migration or external credentials are required.
+
+Verified with the production build, isolated Profile Builder persistence and PDF checks, and `scripts/check_profile_discovery_ui.py`: White/Black survive reload, System follows device appearance, failed saves retain the selected theme, poster destinations work, desktop 80%/100% and mobile layouts fit, mobile carousel scrolls and reduced motion stops decorative animation.
+
+![Profile featured tools in White appearance](docs/images/profile-featured-light.png)
+
+![Profile featured tools in Black appearance](docs/images/profile-featured-dark.png)
+
+![White and Black choices in Settings](docs/images/settings-appearance-light.png)
+
+The broader `scripts/check_studio_ui.py` regression also passed all 13 pages in both appearances at 80%/100% and mobile, including resume import/export, LinkedIn edits, interview missing-model recovery, learning progress, application history, projects and email setup/review gates. `scripts/check_career_banners_ui.py` passed Home banner navigation and controls. No real messages or applications were sent.

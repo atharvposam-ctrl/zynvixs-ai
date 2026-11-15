@@ -15,17 +15,18 @@ async def check():
             for theme in ['light','dark']:
                 await api.patch('/api/settings',json={'theme':theme})
                 await page.goto(harness.BASE)
-                await page.locator('.career-nav').get_by_role('button',name='Profile Builder',exact=True).click()
+                await page.locator('.career-nav').get_by_role('button',name='Home',exact=True).click()
                 banner=page.get_by_role('region',name='AI career inspiration')
                 await banner.get_by_role('button',name='Pause career banners',exact=True).click()
                 await banner.get_by_role('button',name='Next career banner',exact=True).click()
                 await banner.get_by_role('heading',name='Make your experience stand out.',exact=True).wait_for()
                 await banner.get_by_role('button',name='Open Resume Studio',exact=True).click()
                 await page.get_by_role('complementary',name='Resume output',exact=True).wait_for()
-                await page.locator('.career-nav').get_by_role('button',name='Profile Builder',exact=True).click()
+                await page.locator('.career-nav').get_by_role('button',name='Home',exact=True).click()
                 banner=page.get_by_role('region',name='AI career inspiration')
                 await banner.get_by_role('button',name='Build my profile',exact=True).click()
-                assert await page.get_by_label('Full name',exact=True).evaluate('(el)=>document.activeElement===el')
+                await page.get_by_label('Full name',exact=True).wait_for()
+                await page.locator('.career-nav').get_by_role('button',name='Home',exact=True).click()
                 await page.wait_for_timeout(600)
                 await page.locator('.career-main').evaluate('(el)=>el.scrollTo({top:0,behavior:"instant"})')
                 for scale in ['80','100']:
@@ -39,7 +40,7 @@ async def check():
             assert await page.evaluate('document.documentElement.scrollWidth<=innerWidth+1')
             assert not errors,errors
             await browser.close()
-    print('PASS: banner next/pause, destination navigation, profile field focus, light/dark 80/100%, 390px mobile and reduced motion; no JS errors.')
+    print('PASS: banner next/pause, destination navigation, profile navigation, light/dark 80/100%, 390px mobile and reduced motion; no JS errors.')
 
 if __name__=='__main__':
     harness.main=check
