@@ -92,17 +92,17 @@ async def main():
             )
             await page.get_by_role(
                 "heading", name="studio-test.txt", exact=False
-            ).wait_for()
+            ).first.wait_for()
             resumes = (await api.get("/api/career/resumes")).json()
             resume = resumes[0]
             await page.get_by_role("button", name="Edit version", exact=True).click()
-            await page.get_by_text("Edit resume sections & preview", exact=True).click()
-            await page.get_by_label("Resume section 1 content", exact=True).fill(
+            await page.locator("form").filter(has=page.get_by_role("button", name="Save new version", exact=True)).get_by_text("Edit resume sections & preview", exact=True).click()
+            await page.locator("form").filter(has=page.get_by_role("button", name="Save new version", exact=True)).get_by_label("Resume section 1 content", exact=True).fill(
                 "Python developer.\n\nSQL analysis project."
             )
             assert (
                 "\n\n"
-                in await page.get_by_label(
+                in await page.locator("form").filter(has=page.get_by_role("button", name="Save new version", exact=True)).get_by_label(
                     "Resume section 1 content", exact=True
                 ).input_value()
             )
@@ -111,7 +111,7 @@ async def main():
             ).click()
             await page.get_by_role(
                 "heading", name="studio-test.txt — revised", exact=False
-            ).wait_for()
+            ).first.wait_for()
             assert (await api.get("/api/career/resumes")).json()[0]["metadata"][
                 "parent_id"
             ] == resume["id"]

@@ -7,6 +7,7 @@ import { createRoot } from "react-dom/client";
 import App from "./Career";
 import "./styles/tokens.css";
 import "./styles/app.css";
+import "./styles/discover.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

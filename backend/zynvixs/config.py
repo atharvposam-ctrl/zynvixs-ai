@@ -27,7 +27,7 @@ for _d in (DATA_DIR, MODELS_DIR, UPLOADS_DIR):
 # through /api/settings; nothing here is decorative.
 DEFAULT_SETTINGS: dict[str, Any] = {
     # appearance
-    "theme": "system",            # system | light | dark
+    "theme": "light",            # system | light | dark
     "density": "comfortable",     # comfortable | compact
     "font_scale": 100,            # percent
     # engine

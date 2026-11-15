@@ -2,6 +2,13 @@
 
 All notable changes to Zynvixs are listed here. Versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.1.0-beta.5] — 2026-11-16
+
+- Add a blue-and-white career discovery theme across the workspace, with rounded navigation, cards, forms and matching blue accents in dark appearance.
+- Add three animated career-profile, resume and LinkedIn banners on Home and Profile Builder, with working destinations, category selectors and previous/next/pause controls.
+- Respect reduced motion, hover and keyboard focus; use original local CSS artwork with no advertising service or tracking requests.
+- New workspaces start in light appearance; existing saved appearance preferences are preserved.
+
 ## [1.1.0-beta.4] — 2026-11-16
 
 - Place Resume Studio inputs and editable text on the left and the actual saved PDF output on the right, with responsive stacked panels on mobile.

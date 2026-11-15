@@ -1,3 +1,4 @@
+import { CareerBanners } from "./CareerBanners";
 import { Toasts } from "./App";
 import {
   ProfileEditor,
@@ -492,6 +493,7 @@ export default function Career() {
                       in one place.
                     </p>
                   </section>
+                  <div className="home-discovery"><CareerBanners navigate={setPage} /></div>
                   <section className="career-cards">
                     {shortcuts.map((p, i) => (
                       <button key={p} onClick={() => setPage(p)}>
@@ -567,7 +569,7 @@ export default function Career() {
             {page === "Resume Studio" && <ResumeBuilder />}
             {page === "Automation" && <AutomationSetup />}
             {page === "Applications" && <ApplicationsBoard />}
-            {page === "Profile Builder" && <ProfileEditor />}
+            {page === "Profile Builder" && <><CareerBanners navigate={(next) => { if (next === "Profile Builder") { document.querySelector<HTMLInputElement>('input[name="name"]')?.focus(); document.querySelector('.studio-workspace fieldset')?.scrollIntoView({ block: "start", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" }); } else setPage(next); }} /><ProfileEditor /></>}
             {page === "LinkedIn Optimizer" && <LinkedinStudio />}
             {page === "Interview Prep" && <InterviewStudio />}
             {page === "Skills & Training" && <LearningStudio />}
