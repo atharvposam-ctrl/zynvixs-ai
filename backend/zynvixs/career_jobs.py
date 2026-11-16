@@ -250,7 +250,8 @@ async def retrieve(body, client):
 @router.post("/criteria")
 def criteria(body: dict):
     resume = find_resume(str(body.get("resume_id", "")))
-    extracted = skills(resume["content"])
+    profile = {r["title"].lower(): r["content"].strip() for r in current_profile()}
+    extracted = skills(resume["content"] + " " + profile.get("skills", ""))
     roles = [
         r
         for r, terms in [
@@ -261,11 +262,34 @@ def criteria(body: dict):
         ]
         if any(t in extracted for t in terms)
     ]
+    years = re.findall(r"\d+\+?\s*years?", resume["content"], re.I)
+    preferences = profile.get("preferences", "").lower()
+    arrangements = [v for v in ("remote", "hybrid", "on-site") if re.search(r"(?<!\w)" + v + r"(?!\w)", preferences)]
+    job_types = [v for v in ("full-time", "part-time", "contract", "internship") if v in preferences]
+    # Only one unambiguous explicit preference is applied. Never infer employer
+    # board identifiers or credentials, or interpret personal location as eligibility.
+    values = {
+        "role": (profile.get("resume target role") or (roles[0] if roles else ""))[:200],
+        "keywords": " ".join(extracted[:3])[:300],
+        "location": profile.get("location", "")[:200],
+        "experience": years[0] if years else "",
+        "arrangement": arrangements[0] if len(arrangements) == 1 else "",
+        "job_type": job_types[0] if len(job_types) == 1 else "",
+    }
     return {
         "skills": extracted,
         "suggested_roles": roles,
-        "experience_mentions": re.findall(r"\d+\+?\s*years?", resume["content"], re.I),
-        "note": "Rule-based suggestions. Review and edit search criteria before retrieving jobs.",
+        "experience_mentions": years,
+        "autofill": values,
+        "autofill_sources": {
+            "role": "Saved target role" if profile.get("resume target role") else "Resume/profile skill keywords",
+            "keywords": "Recognized resume and saved-profile skills (first three)",
+            "location": "Saved profile location; review remote and relocation restrictions",
+            "experience": "First explicit years-of-experience phrase in the selected resume",
+            "arrangement": "Single explicit work preference in the saved profile",
+            "job_type": "Single explicit job-type preference in the saved profile",
+        },
+        "note": "Local rule-based suggestions only. Review before searching. Keywords are AND filters; remove terms to broaden results. No provider is contacted by auto-fill.",
     }
 
 

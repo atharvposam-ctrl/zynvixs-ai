@@ -2,6 +2,13 @@
 
 All notable changes to Zynvixs are listed here. Versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.1.0-beta.8] — 2026-11-17
+
+- Rebuild Job Search with a compact search console, category chips, collapsible filters, listing cards, sorting, saved-job views and a career/source sidebar.
+- Add local profile-and-resume auto-fill with field provenance, preservation of existing edits, explicit replacement and honest blank values for unknown or ambiguous preferences.
+- Preserve genuine provider retrieval, errors, saved searches/cache, match explanations, full-description dialogs, original links, resume tailoring and draft application tracking.
+- Add a per-listing Application auto-fill handoff to the existing reviewed browser assistant; opening it never submits an application.
+
 ## [1.1.0-beta.7] — 2026-11-16
 
 - Replace legacy decorative gold/yellow with theme-aware neutral text and borders; dashboard labels, actions and icons are black in White appearance and readable in Black appearance.

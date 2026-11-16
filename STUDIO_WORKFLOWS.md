@@ -216,3 +216,17 @@ Validation: production TypeScript/Vite build; 114 backend tests; all 13-page lig
 ![Role-based practice recommendations — controlled local profile](docs/images/interview-recommendations-light.png)
 
 ![Automation in White appearance](docs/images/automation-theme-light.png)
+
+## Job Search rebuild and auto-fill (beta.8)
+
+Job Search replaces the long form with a compact resume selector, role/location search bar, category chips, expandable filters and reference-inspired listing cards. The right sidebar contains real career shortcuts, actual provider status, employer-board setup, saved searches and clearly labeled outbound portal links. The sidebar is not a feed of invented featured vacancies. Sorting is local to displayed results; counts reflect actual retrieved or saved records. Full listing descriptions open in a keyboard-dismissible dialog. Missing salary/date/arrangement fields remain labeled as unavailable.
+
+**Auto-fill from profile & resume** calls the local criteria API, not a model or job provider. It reads the saved target role, location and unambiguous work/job-type preferences, recognized profile/resume skills, and the first explicit years-of-experience phrase in the selected resume. Each suggested field shows its origin. Existing fields are preserved by default; **Replace filled fields on the next auto-fill** explicitly permits replacement. Unknown values remain blank, and company-board identifiers/credentials are never guessed. Review all fields before **Search jobs**; keyword and experience filters can be restrictive. Changing the active resume clears displayed matches and previously auto-filled criteria; manually edited criteria are kept for review. Saved matches from another resume are labeled accordingly.
+
+**Application auto-fill** on a job card passes that listing to Automation's existing browser assistant. It requires the optional Playwright/Chromium worker and a visible browser. Review profile suggestions before filling, and separately approve any final submission. It does not bypass site restrictions, manual sign-in, CAPTCHA, MFA or file/consent steps. **Start Application** creates a draft record, never a submitted one. Resume tailoring, saved-job actions and cached-search restoration are retained. Cached listings are explicitly marked and should be refreshed before applying.
+
+Validation: production TypeScript/Vite build; **117 backend tests** including new auto-fill provenance, ambiguous/unknown fields and resume-switch checks; existing 13-page light/dark 80%/100% and mobile UI regression. `scripts/check_job_search_ui.py` exercises auto-fill/no implicit retrieval, edit preservation/explicit replacement, provider failures, listing details, real saved/draft/cache endpoints, tailoring/browser handoff and resume invalidation with clearly labeled provider fixtures in an isolated subprocess. No test vacancies are shipped as product data and no real applications are submitted. A separate read-only live Remotive check returned **17 genuine listings** on 17 November 2026; availability can change. Browser handoff was checked, not a new live external-site application submission.
+
+![Rebuilt Job Search — White appearance, controlled provider fixture](docs/images/job-discovery-light.png)
+
+![Rebuilt Job Search — Black appearance, controlled provider fixture](docs/images/job-discovery-dark.png)
