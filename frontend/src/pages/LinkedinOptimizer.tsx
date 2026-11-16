@@ -1,4 +1,10 @@
-import { useState } from "react";
+import {
+  LinkedinJourney,
+  LinkedinBanners,
+  type LinkedinSource,
+} from "../LinkedinJourney";
+import { CareerPageFooter } from "../CareerRecommendations";
+import { useEffect, useState } from "react";
 import { call } from "../Workflows";
 import {
   type Row,
@@ -33,7 +39,11 @@ function LegacyDrafts({ useText }: { useText: (text: string) => void }) {
     </details>
   ) : null;
 }
-export function LinkedinStudio() {
+export function LinkedinStudio({
+  navigate,
+}: {
+  navigate: (page: string) => void;
+}) {
   const state = useRows("linkedin"),
     [role, setRole] = useState(""),
     [original, setOriginal] = useState({
@@ -44,9 +54,90 @@ export function LinkedinStudio() {
     [active, setActive] = useState<Row | null>(null),
     [busy, setBusy] = useState(false),
     [message, setMessage] = useState("");
+  const [keywordInput, setKeywordInput] = useState("");
   const data = active ? parse(active) : null;
+  useEffect(() => {
+    setKeywordInput(
+      active ? parse(active)?.proposed?.keywords?.join(", ") || "" : "",
+    );
+  }, [active?.id]);
+  function focus(id: string) {
+    const el = document.getElementById(id);
+    el?.scrollIntoView({
+      block: "start",
+      behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "instant"
+        : "smooth",
+    });
+    (el?.matches("input,textarea,button,select")
+      ? el
+      : (el?.querySelector(
+          "input,textarea,button,select",
+        ) as HTMLElement | null)
+    )?.focus({
+      preventScroll: true,
+    });
+  }
+  function useSource(source: LinkedinSource, replace: boolean) {
+    setRole((current) => (replace ? source.role : current || source.role));
+    setOriginal((current) => ({
+      headline: replace ? source.headline : current.headline || source.headline,
+      about: replace ? source.about : current.about || source.about,
+      experience: replace
+        ? source.experience
+        : current.experience || source.experience,
+    }));
+    setMessage(
+      "Source information imported for review. " +
+        (replace
+          ? "Existing sections were replaced."
+          : "Filled source sections were kept."),
+    );
+    requestAnimationFrame(() => focus("linkedin-source-form"));
+  }
+  async function copySection(text: string) {
+    try {
+      await navigator.clipboard.writeText(text);
+      setMessage("Section copied. Review it before updating LinkedIn.");
+    } catch {
+      state.setError(
+        "Clipboard unavailable. Select the text manually or use Export text.",
+      );
+    }
+  }
+  async function saveManual() {
+    setBusy(true);
+    state.setError("");
+    try {
+      if (!role.trim() || !Object.values(original).some((v) => v.trim()))
+        throw new Error("Enter a target role and at least one source section.");
+      setActive(
+        await call("career/linkedin", "POST", {
+          title: role + " — manual LinkedIn draft",
+          content: JSON.stringify({
+            original: { ...original, role },
+            proposed: {
+              ...original,
+              explanations: [
+                "Manual draft using supplied text; no AI generation was performed.",
+              ],
+              keywords: [],
+            },
+          }),
+          metadata: { kind: "manual_linkedin" },
+        }),
+      );
+      await state.load();
+      setMessage("Manual draft saved. No model was used or content published.");
+    } catch (e) {
+      state.setError(String(e));
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
-    <section className="studio-workspace">
+    <section className="studio-workspace linkedin-workspace">
       <div className="studio-hero">
         <small>LINKEDIN OPTIMIZER</small>
         <h2>A clearer profile, grounded in your experience.</h2>
@@ -55,6 +146,31 @@ export function LinkedinStudio() {
           publishing is provided.
         </p>
       </div>
+      <LinkedinBanners navigate={navigate} focus={focus} />
+      <LinkedinJourney
+        navigate={navigate}
+        useSource={useSource}
+        disabled={busy}
+      />
+      <section
+        className="linkedin-publishing-status"
+        aria-label="LinkedIn publishing status"
+      >
+        <h3>Publishing & connections</h3>
+        <p>
+          Local drafts, PDF creation and saved job preparation are available
+          here. LinkedIn profile publishing is not integrated; no account access
+          or automatic update is claimed. Copy reviewed text and update your
+          profile in LinkedIn.
+        </p>
+        <a
+          href="https://www.linkedin.com/in/me/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Open LinkedIn to update manually ↗
+        </a>
+      </section>
       <LegacyDrafts
         useText={(text) =>
           setOriginal({ ...original, about: text.slice(0, 12000) })
@@ -64,6 +180,7 @@ export function LinkedinStudio() {
       <Status state={state} />
       {message && <p role="status">{message}</p>}
       <form
+        id="linkedin-source-form"
         onSubmit={async (e) => {
           e.preventDefault();
           setBusy(true);
@@ -80,69 +197,81 @@ export function LinkedinStudio() {
           }
         }}
       >
-        <label>
-          Target role
-          <input
-            required
-            value={role}
-            maxLength={200}
-            onChange={(e) => setRole(e.target.value)}
-          />
-        </label>
-        <label>
-          Import profile export (PDF, DOCX, TXT, JSON)
-          <input
-            type="file"
-            accept=".pdf,.docx,.txt,.md,.json"
-            onChange={async (e) => {
-              const file = e.target.files?.[0];
-              if (!file) return;
-              setBusy(true);
-              try {
-                const form = new FormData();
-                form.append("file", file);
-                const r = await call(
-                  "career-workspace/extract-document",
-                  "POST",
-                  form,
-                );
-                setOriginal({ ...original, about: r.text.slice(0, 12000) });
-                setMessage(
-                  "Imported text placed in About for review. Move experience details to the appropriate section before generating.",
-                );
-              } catch (e) {
-                state.setError(String(e));
-              } finally {
-                setBusy(false);
-              }
-            }}
-          />
-        </label>
-        {(["headline", "about", "experience"] as const).map((key) => (
-          <label key={key}>
-            {key[0].toUpperCase() + key.slice(1)}
-            <textarea
-              aria-label={key[0].toUpperCase() + key.slice(1)}
-              maxLength={
-                key === "headline" ? 1000 : key === "about" ? 12000 : 16000
-              }
-              value={original[key]}
-              onChange={(e) =>
-                setOriginal({ ...original, [key]: e.target.value })
-              }
+        <fieldset disabled={busy} className="linkedin-source-fields">
+          <h2>Create your LinkedIn draft</h2>
+          <label>
+            Target role
+            <input
+              required
+              value={role}
+              maxLength={200}
+              onChange={(e) => setRole(e.target.value)}
             />
           </label>
-        ))}
-        <button disabled={busy} type="submit">
-          {busy ? "Generating suggestions…" : "Generate profile improvements"}
-        </button>
+          <label>
+            Import profile export (PDF, DOCX, TXT, JSON)
+            <input
+              type="file"
+              accept=".pdf,.docx,.txt,.md,.json"
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                setBusy(true);
+                try {
+                  const form = new FormData();
+                  form.append("file", file);
+                  const r = await call(
+                    "career-workspace/extract-document",
+                    "POST",
+                    form,
+                  );
+                  setOriginal({ ...original, about: r.text.slice(0, 12000) });
+                  setMessage(
+                    "Imported text placed in About for review. Move experience details to the appropriate section before generating.",
+                  );
+                } catch (e) {
+                  state.setError(String(e));
+                } finally {
+                  setBusy(false);
+                }
+              }}
+            />
+          </label>
+          {(["headline", "about", "experience"] as const).map((key) => (
+            <label key={key}>
+              {key[0].toUpperCase() + key.slice(1)}
+              <textarea
+                aria-label={key[0].toUpperCase() + key.slice(1)}
+                maxLength={
+                  key === "headline" ? 1000 : key === "about" ? 12000 : 16000
+                }
+                value={original[key]}
+                onChange={(e) =>
+                  setOriginal({ ...original, [key]: e.target.value })
+                }
+              />
+            </label>
+          ))}
+          <button disabled={busy} type="submit">
+            {busy ? "Generating suggestions…" : "Generate profile improvements"}
+          </button>
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => void saveManual()}
+          >
+            Save source as editable draft
+          </button>
+        </fieldset>
       </form>
       {data && active && (
         <section>
           <h2>Original vs proposed</h2>
           <p>
-            AI-generated suggestions. Verify every statement before copying to
-            LinkedIn.
+            {active.metadata?.kind === "manual_linkedin"
+              ? "Manually supplied draft."
+              : "AI-generated suggestions."}{" "}
+            Verify every statement before copying to LinkedIn.
           </p>
           {(["headline", "about", "experience"] as const).map((key) => (
             <div className="comparison-grid" key={key}>
@@ -169,6 +298,9 @@ export function LinkedinStudio() {
                     }
                   />
                 </label>
+                <button onClick={() => void copySection(data.proposed[key])}>
+                  Copy {key}
+                </button>
               </article>
             </div>
           ))}
@@ -178,7 +310,35 @@ export function LinkedinStudio() {
               <li key={i}>{x}</li>
             ))}
           </ul>
-          <p>Suggested keywords: {data.proposed.keywords.join(", ")}</p>
+          <label>
+            Proposed keywords
+            <input
+              aria-label="Proposed keywords"
+              maxLength={1000}
+              value={keywordInput}
+              onChange={(e) => {
+                setKeywordInput(e.target.value);
+                setActive({
+                  ...active,
+                  content: JSON.stringify({
+                    ...data,
+                    proposed: {
+                      ...data.proposed,
+                      keywords: e.target.value
+                        .split(",")
+                        .map((v) => v.trim())
+                        .filter(Boolean),
+                    },
+                  }),
+                });
+              }}
+            />
+          </label>
+          <button
+            onClick={() => void copySection(data.proposed.keywords.join(", "))}
+          >
+            Copy suggested skills
+          </button>
           <div className="job-actions">
             <button
               onClick={async () => {
@@ -187,6 +347,7 @@ export function LinkedinStudio() {
                   setActive(
                     await call("career/linkedin", "POST", {
                       ...record,
+                      metadata: { ...record.metadata, parent_id: active.id },
                       title:
                         active.title.replace(/ — revised$/, "") + " — revised",
                     }),
@@ -246,6 +407,7 @@ export function LinkedinStudio() {
           </button>
         </article>
       ))}
+      <CareerPageFooter navigate={navigate} />
     </section>
   );
 }

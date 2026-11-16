@@ -111,6 +111,7 @@ async def linkedin(body: LinkedinRequest):
         Record(
             title=body.role + " — LinkedIn draft",
             content=json.dumps({"original": original, "proposed": result}),
+            metadata={"kind": "ai_linkedin"},
         ),
     )
 

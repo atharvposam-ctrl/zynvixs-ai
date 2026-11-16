@@ -282,3 +282,19 @@ Startup remains: extract the updated ZIP, retain your `data` and `models` folder
 ![Applications command center — Black appearance, controlled records](docs/images/application-command-center-dark.png)
 
 ![Responsive application details drawer](docs/images/application-details-mobile.png)
+
+## LinkedIn profile → resume → reviewed application (beta.13)
+
+LinkedIn Optimizer now includes five career banners and an editable shared-profile intake for contact details, career target, headline, summary, education, experience, skills, projects and certifications. **Save details & use in LinkedIn draft** explicitly saves to the same profile storage as Profile Builder and imports approved text into the source editor. **Use saved profile in LinkedIn draft** reads the saved profile without overwriting currently typed intake fields. Existing filled source sections are kept unless **Replace filled LinkedIn source sections…** is selected. Contact email/phone are excluded from the assembled public About text. Source imports respect the existing editor length limits; full saved profile/resume records are not truncated or deleted. Existing uploaded profile exports and old workspace drafts remain available.
+
+**Save details & preview resume PDF** uses supplied profile facts without requiring a model, creates a new saved version, selects it as the shared active resume, and renders actual PDF bytes locally. Download is disabled when the intake changes until a new PDF is saved. The active form-generated resume can be restored when reopening the tab. Saved resumes can also be selected and imported as source text without rewriting the shared profile.
+
+AI suggestions still require the configured local model. **Save source as editable draft** works without inference and is labeled manual; AI/manual versions remain distinguishable. Headline/About/Experience are editable side by side with their original text, with per-section copying, editable suggested skills, text export and new-version saves retaining parent IDs. No new model or remote publishing integration is claimed.
+
+The saved-opportunity step uses actual saved vacancies. **Prepare selected application** creates/reopens a draft in Applications; the selected resume is linked only for editable Saved/Preparing/Reviewing records. Already-submitted records keep their used resume. **Review browser auto-fill** passes the supported cached job to the existing Automation workflow. Missing cache errors point back to Job Search. The app does not publish a profile to LinkedIn or auto-submit applications. The publishing panel clearly explains manual copy/update and provides a user-initiated outbound LinkedIn profile link. Browser assistance requires existing Playwright/Chromium setup and review, plus manual site login, uploads, consent, CAPTCHA/MFA as needed. No passwords or API credentials are collected in the profile form.
+
+Validation: production TypeScript/Vite build, 120 backend tests and the existing 13-page regression checks. `scripts/check_linkedin_journey_ui.py` uses isolated data and local provider fixtures to check failed-profile-save retention, source preservation/replacement, missing-model state, manual/version drafts, copy controls, actual PDF download/readback and stale protection, shared-profile reload, application preparation with the selected resume, duplicate avoidance and browser handoff, White/Black 80%/100%, mobile fit and reduced motion. No live LinkedIn publishing, real model inference or real application submission was performed. Existing data and setup instructions are preserved; no new credentials or runtime dependencies are required for local features.
+
+![LinkedIn career journey — White appearance, controlled profile](docs/images/linkedin-career-journey-light.png)
+
+![LinkedIn career journey — Black appearance, controlled profile](docs/images/linkedin-career-journey-dark.png)

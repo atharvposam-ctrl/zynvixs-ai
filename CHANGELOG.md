@@ -2,6 +2,13 @@
 
 All notable changes to Zynvixs are listed here. Versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.1.0-beta.13] — 2026-11-17
+
+- Rebuild LinkedIn Optimizer around shared profile entry, editable LinkedIn drafts, real resume PDF preview/download and reviewed saved-job application preparation.
+- Add five career banners for professional story, profile wording, resume creation, genuine job search and application preparation in White/Black/mobile layouts.
+- Preserve source edits unless replacement is explicitly chosen; support saved profile/resume imports, manual drafts without a model, per-section copying, editable skills and saved version lineage.
+- Keep direct LinkedIn publishing unavailable and clearly labeled. Draft applications and browser handoffs do not submit automatically or overwrite a submitted application's used resume.
+
 ## [1.1.0-beta.12] — 2026-11-17
 
 - Build Applications into a career command center with five working banners, actual saved-record summary counts, searchable/filterable Kanban and list views, reminders and activity history.
