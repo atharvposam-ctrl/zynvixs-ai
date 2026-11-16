@@ -40,6 +40,20 @@ async def check():
                 await button.click()
             await page.goto(harness.BASE)
             await nav('Job Search')
+            banners=page.get_by_role('region',name='Career spotlight banners',exact=True)
+            await banners.get_by_role('button',name='Explore Resume Studio',exact=True).click()
+            await page.get_by_role('complementary',name='Resume output',exact=True).wait_for()
+            await nav('Job Search')
+            await page.get_by_role('region',name='Featured career banners',exact=True).get_by_role('button',name='Tell your professional story',exact=False).click()
+            await page.get_by_label('Full name',exact=True).wait_for()
+            await nav('Job Search')
+            await banners.get_by_role('button',name='Explore Interview Prep',exact=True).click()
+            await page.get_by_role('region',name='Interview recommendations',exact=True).wait_for()
+            await nav('Job Search')
+            await banners.get_by_role('button',name='Explore training',exact=True).click()
+            await page.get_by_role('region',name='Learning recommendations',exact=True).wait_for()
+            await nav('Job Search')
+            assert searches==[]
             workspace=page.get_by_role('region',name='Job search workspace',exact=True)
             await page.get_by_label('Active resume',exact=True).select_option(r1['id'])
             await page.get_by_role('button',name='Type',exact=True).click()
@@ -117,15 +131,21 @@ async def check():
                     await page.locator('.career-main').evaluate('(e)=>e.scrollTo({top:0,behavior:"instant"})')
                     await page.screenshot(path=str(harness.SHOTS/f'jobs-{theme}-{scale}.png'))
                     assert await page.evaluate('document.documentElement.scrollWidth<=innerWidth+1')
+                await banners.scroll_into_view_if_needed()
+                await banners.screenshot(path=str(harness.SHOTS/f'career-banners-{theme}.png'))
                 await page.set_viewport_size({'width':390,'height':844})
                 await page.wait_for_timeout(300)
                 await page.screenshot(path=str(harness.SHOTS/f'jobs-{theme}-mobile.png'))
+                await banners.scroll_into_view_if_needed()
+                await banners.screenshot(path=str(harness.SHOTS/f'career-banners-{theme}-mobile.png'))
                 assert await page.evaluate('document.documentElement.scrollWidth<=innerWidth+1')
                 await page.set_viewport_size({'width':1772,'height':1100})
                 await page.wait_for_timeout(300)
+            await page.emulate_media(reduced_motion='reduce')
+            assert await page.locator('.job-banner-paper').first.evaluate('(e)=>getComputedStyle(e).animationName')=='none'
             assert not errors,errors
             await b.close()
-    print('PASS: local auto-fill/provenance, preserves edits and explicit replace, no implicit search, real search/cache/save/draft API flows against labeled provider fixtures, failed provider and auto-fill retry, details, tailoring, browser handoff, resume invalidation, White/Black 80/100% and mobile. No real applications submitted.')
+    print('PASS: banner and featured destinations, reduced motion, local auto-fill/provenance, preserves edits and explicit replace, no implicit search, real search/cache/save/draft API flows against labeled provider fixtures, failed provider and auto-fill retry, details, tailoring, browser handoff, resume invalidation, White/Black 80/100% and mobile. No real applications submitted.')
 
 if __name__=='__main__':
     original=subprocess.Popen

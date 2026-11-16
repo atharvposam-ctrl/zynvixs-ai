@@ -2,6 +2,12 @@
 
 All notable changes to Zynvixs are listed here. Versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.1.0-beta.10] — 2026-11-17
+
+- Add illustrated Resume Studio and Interview Prep banners plus a wide Skills & Training banner to the Job Search results column, including its empty state.
+- Replace the plain featured sidebar list with five thumbnail-style career banners linking to existing tools.
+- Bundle original SVG artwork locally with gentle reduced-motion-aware animation; preserve real job listings, empty states and application actions.
+
 ## [1.1.0-beta.9] — 2026-11-17
 
 - Refine Job Search into a centered, listing-led directory matching the supplied reference: compact count/title, category chips, smaller resume/search controls, filter pills and a narrow featured-tools sidebar.

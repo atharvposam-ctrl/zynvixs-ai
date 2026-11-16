@@ -242,3 +242,15 @@ Checks: production build, 117 backend tests and all 13-page appearance/scale/mob
 ![Compact Job Search directory — White appearance, controlled provider fixture](docs/images/job-directory-light.png)
 
 ![Compact Job Search directory — Black appearance, controlled provider fixture](docs/images/job-directory-dark.png)
+
+## Job Search banners (beta.10)
+
+The results column now includes a **Career spotlight** area with two illustrated posters (Resume Studio and Interview Prep) and a wide Skills & Training banner. These remain visible below the empty/saved-results area so a short results column no longer ends in a large blank block alongside the taller source sidebar. The sidebar **Featured** area has five thumbnail-style career promotions for resume, profile, interview, learning and application tools, each with a working destination. They are clearly separate from vacancy listings; no third-party events, sponsors, offer counts or jobs are invented.
+
+All new artwork is original inline SVG/CSS, bundled locally. No image CDN, tracking service, new credentials or dependencies are introduced. Gentle animation honors reduced motion. Existing search, auto-fill, provider setup, saved jobs, application drafts, tailoring and browser handoff remain unchanged.
+
+Checks: production TypeScript/Vite build; 117 backend tests; isolated Job Search UI checks covering banner/featured destinations, reduced motion, White/Black at 80%/100%, mobile fit, and the existing auto-fill/save/draft/cache/detail/tailoring/browser flows using labeled provider fixtures. No real applications were submitted. Resume/AI interview generation still needs the configured model, and browser application filling still needs the optional browser worker and review.
+
+![Job Search career banners — local SVG artwork](docs/images/job-career-banners-light.png)
+
+![Job Search career banners in Black appearance](docs/images/job-career-banners-dark.png)
