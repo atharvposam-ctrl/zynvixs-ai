@@ -230,3 +230,15 @@ Validation: production TypeScript/Vite build; **117 backend tests** including ne
 ![Rebuilt Job Search — White appearance, controlled provider fixture](docs/images/job-discovery-light.png)
 
 ![Rebuilt Job Search — Black appearance, controlled provider fixture](docs/images/job-discovery-dark.png)
+
+## Compact Job Search directory (beta.9)
+
+Job Search now follows the supplied listing-directory reference more closely: a centered heading with actual result/saved counts, horizontal category chips, a slim resume/auto-fill row, compact role/location search and filter pills, slimmer listing cards and a narrow featured-career-tools sidebar. The sidebar opens real existing career pages; it does not copy third-party advertisements or invent offers. A redundant large page heading is visually hidden while retaining the accessible page heading.
+
+Use the bookmark icon to **Save Job**. Select the **three-dot menu** for **Tailor Resume**, **Start Application** and **Application auto-fill**. Original links and full details remain visible, with match explanations in the expandable **Why this matches** section. Type/Location/Roles shortcut pills open or focus their actual filter controls. Existing profile/resume auto-fill, provider setup/status, cached history, sorting and saved-job views are retained. No user data or retrieval logic is replaced.
+
+Checks: production build, 117 backend tests and all 13-page appearance/scale/mobile regressions passed. The isolated Job Search UI script checks criteria auto-fill/edit preservation, actual backend save/draft/cache flows using labeled provider fixtures, failed providers, details dialogs, the action menu, tailoring/browser handoff, resume invalidation, filter shortcut focus and White/Black 80%/100% plus mobile layouts. No real applications or messages are sent by these checks. No additional configuration is introduced; live sources and browser-worker limitations from beta.8 still apply.
+
+![Compact Job Search directory — White appearance, controlled provider fixture](docs/images/job-directory-light.png)
+
+![Compact Job Search directory — Black appearance, controlled provider fixture](docs/images/job-directory-dark.png)

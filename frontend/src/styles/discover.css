@@ -195,3 +195,56 @@
 @media(max-width:1150px) {.job-results-layout {grid-template-columns:minmax(0,1fr) 250px;gap:18px;}.job-local-tag {display:none;}.job-filter-fields {grid-template-columns:repeat(2,minmax(0,1fr));}}
 @media(max-width:850px) {.job-results-layout {grid-template-columns:1fr;}.job-search-aside {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));}.job-search-bar {grid-template-columns:1fr 1fr;}.job-search-submit {grid-column:1/-1;}.job-autofill-review dl {grid-template-columns:repeat(2,minmax(0,1fr));}}
 @media(max-width:600px) {.job-search-console {padding:15px;}.job-search-bar {grid-template-columns:1fr;padding:12px;}.job-search-submit {grid-column:auto;}.job-resume-row {align-items:stretch;flex-direction:column;}.job-resume-row>label {min-width:0;}.job-filter-fields {grid-template-columns:1fr;}.job-autofill-review dl {grid-template-columns:1fr;}.job-results-toolbar {align-items:stretch;flex-direction:column;}.job-search-aside {grid-template-columns:1fr;}:root[data-theme] .career-shell .vacancy-card {padding:17px;}.vacancy-badges .vacancy-salary {margin-left:0;}.vacancy-card-heading {gap:10px;}.company-monogram {width:44px;height:44px;font-size:14px;}.vacancy-details-dialog {padding:20px;}.job-category-chips {flex-wrap:nowrap;overflow:auto;padding-bottom:5px;}.job-category-chips button {white-space:nowrap;}}
+/* Listing-led refinement: keep the reference's compact, centered directory rhythm. */
+.job-discovery {max-width:1190px;}
+.job-discovery-heading {margin-bottom:20px;}
+:root[data-theme] .career-shell .job-discovery-heading h2 {font-size:clamp(27px,2.3vw,36px);margin:0 0 9px;letter-spacing:-.025em;}
+.job-discovery-heading p {font-size:13px;}
+.job-category-chips {margin:0 0 24px;flex-wrap:nowrap;overflow-x:auto;padding:2px 0 8px;}
+:root[data-theme] .career-shell .job-category-chips button {display:flex;align-items:center;gap:8px;white-space:nowrap;padding:11px 15px;background:var(--surface);font-size:12px;}
+.job-search-console {border:0;border-radius:0;padding:0;margin:0 0 12px;}
+.job-resume-row {gap:10px;margin-bottom:12px;}
+.job-resume-row>label {display:grid;grid-template-columns:auto 1fr;align-items:center;gap:12px;font-size:11px;}
+.job-resume-row>button {font-size:11px;padding:9px 12px;min-height:36px;border-radius:20px;}
+.job-resume-row select {font-size:12px;}
+.job-search-bar {padding:0;background:transparent;gap:10px;grid-template-columns:1.5fr 1fr auto;}
+.job-search-bar label>span {display:none;}
+.job-search-bar input {border-radius:23px;min-height:37px;font-size:12px;padding:10px 14px;}
+:root[data-theme] .career-shell .job-search-submit {min-height:37px;border-radius:24px;font-size:12px;padding:10px 17px;}
+.job-discovery .job-replace-choice {font-size:10px;margin:10px 0;}
+.job-extra-filters {border-top:0;padding-top:0;}
+.job-extra-filters>summary {border:1px solid var(--border-strong);border-radius:20px;font-size:11px;padding:7px 12px;}
+.job-filter-pills {display:flex;gap:8px;margin:-41px 0 18px 108px;pointer-events:none;min-height:30px;}
+:root[data-theme] .career-shell .job-filter-pills button {display:flex;align-items:center;gap:6px;border-radius:20px;font-size:11px;padding:7px 13px;pointer-events:auto;}
+.job-search-console:has(.job-extra-filters[open])+.job-filter-pills {margin-top:10px;margin-left:0;}
+.job-results-layout {grid-template-columns:minmax(0,1fr) 270px;gap:24px;}
+.job-results-toolbar {margin-bottom:13px;}.job-results-toolbar label {display:flex;flex-direction:row;align-items:center;gap:7px;min-width:0;font-size:0;}.job-results-toolbar select {font-size:11px;border-radius:20px;padding:7px 10px;}
+:root[data-theme] .career-shell .job-results-toolbar button {font-size:11px;padding:7px 12px;}
+:root[data-theme] .career-shell .vacancy-card {padding:21px 22px 16px;border-radius:19px;margin-bottom:16px;}
+:root[data-theme] .career-shell .vacancy-title {font-size:20px;font-weight:600;}
+.vacancy-card-heading p {font-size:13px;margin:8px 0 0;}.company-monogram {width:62px;height:62px;border-radius:12px;background:var(--surface);}
+.vacancy-meta {font-size:11px;gap:12px;margin:16px 0;}.vacancy-meta>span+span {border-left:1px solid var(--border);padding-left:12px;}
+.vacancy-badges {margin-bottom:12px;gap:6px;}.vacancy-badges>span {font-size:10px;padding:6px 10px;}.vacancy-badges .vacancy-salary {font-weight:600;}
+.vacancy-card details:not(.vacancy-more-actions) {padding:0;border:0;font-size:11px;}.vacancy-card details:not(.vacancy-more-actions)>summary {color:var(--text-2);font-size:11px;}
+.vacancy-date {margin:14px 0 0;font-size:11px;color:var(--accent);}
+.vacancy-card .job-actions {margin:10px 0 4px;gap:7px;}.vacancy-card .job-actions>button,.vacancy-card .job-actions>a {font-size:10px;padding:5px 8px;}
+.vacancy-secondary-actions {display:flex;align-items:center;gap:9px;margin-left:auto;}
+:root[data-theme] .career-shell .job-save-icon {border:0;background:transparent;padding:5px;}
+.vacancy-card .vacancy-more-actions {border:0;padding:0;position:relative;}
+.vacancy-more-actions>summary {display:grid;place-items:center;list-style:none;cursor:pointer;padding:5px;}.vacancy-more-actions>summary::-webkit-details-marker {display:none;}
+.vacancy-more-actions>div {position:absolute;right:0;top:100%;z-index:5;min-width:175px;padding:7px;border:1px solid var(--border);background:var(--surface);box-shadow:var(--shadow-md);border-radius:12px;}
+:root[data-theme] .career-shell .vacancy-more-actions button {display:block;text-align:left;width:100%;border:0;border-radius:7px;padding:10px;background:var(--surface);font-size:11px;}
+:root[data-theme] .career-shell .vacancy-more-actions button:hover {background:var(--sunken);}
+.vacancy-card>small {font-size:9px;line-height:1.5;max-width:90%;}
+.job-search-aside {gap:15px;}.job-search-aside>section {padding:15px;border-radius:17px;}.job-search-aside>section:first-child {background:var(--sunken);padding:15px 5px 5px;}.job-search-aside>section:first-child h3 {font-size:14px;padding:0 10px;}
+:root[data-theme] .career-shell .job-search-aside>section:first-child>button {margin:0;padding:13px 11px;background:var(--surface);border:0;border-radius:0;box-shadow:none;gap:11px;}.job-search-aside>section:first-child>button:first-of-type {border-radius:13px 13px 0 0;}.job-search-aside>section:first-child>button:last-child {border-radius:0 0 13px 13px;}
+.featured-tool-icon {display:grid;place-items:center;width:43px;height:43px;flex:0 0 43px;border-radius:11px;background:var(--accent-soft);color:var(--accent);border:1px solid var(--border);}.job-search-aside button strong {display:block;font-size:11px;font-weight:600;}.job-search-aside button small {display:block;font-size:10px;font-weight:400;color:var(--text-2);margin-top:5px;line-height:1.5;}
+@media(max-width:1000px) {.job-results-layout {grid-template-columns:minmax(0,1fr) 225px;gap:17px;}.job-resume-row {flex-wrap:wrap;}.job-resume-row>label {flex-basis:100%;}}
+@media(max-width:750px) {.job-results-layout {grid-template-columns:1fr;}.job-search-aside {display:grid;grid-template-columns:1fr 1fr;}.job-search-bar {grid-template-columns:1fr 1fr;}.job-search-submit {grid-column:1/-1;}.job-filter-pills {margin-top:10px;margin-left:0;}.job-resume-row>label {display:flex;align-items:stretch;}}
+@media(max-width:500px) {.job-search-aside {grid-template-columns:1fr;}.job-search-bar {grid-template-columns:1fr;}.job-resume-row {flex-direction:column;align-items:stretch;}:root[data-theme] .career-shell .vacancy-card {padding:18px 15px;}.vacancy-card-heading {gap:10px;}.company-monogram {width:46px;height:46px;}.vacancy-card>small {max-width:100%;}.job-filter-pills {flex-wrap:wrap;}.job-search-console {margin-bottom:10px;}}
+.job-filter-control-row {display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start;margin-top:14px;}
+.job-filter-control-row .job-filter-pills {margin:0;min-height:0;}
+.job-filter-control-row .job-extra-filters[open] {order:1;flex:1 0 100%;}
+.job-filter-control-row .job-extra-filters:not([open]) {flex:0 0 auto;}
+.job-filter-control-row .job-filter-pills button {background:var(--surface);}
+.job-search-aside button>.featured-tool-icon {flex:0 0 43px;}

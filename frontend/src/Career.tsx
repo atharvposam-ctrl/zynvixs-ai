@@ -561,7 +561,7 @@ export default function Career() {
             {page !== "Career Dashboard" && (
               <h1
                 className={
-                  page === "Resume Studio" ? "resume-page-title" : undefined
+                  (page === "Resume Studio" || page === "Job Search") ? "resume-page-title" : undefined
                 }
               >
                 {page}

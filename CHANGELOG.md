@@ -2,6 +2,13 @@
 
 All notable changes to Zynvixs are listed here. Versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.1.0-beta.9] — 2026-11-17
+
+- Refine Job Search into a centered, listing-led directory matching the supplied reference: compact count/title, category chips, smaller resume/search controls, filter pills and a narrow featured-tools sidebar.
+- Reduce listing-card clutter with expandable match explanations, a bookmark save icon and a three-dot menu for tailoring, draft applications and reviewed application auto-fill.
+- Keep all existing retrieval, criteria auto-fill, provider setup/status, sorting, saved history, original links and full-description workflows.
+- Check filter shortcuts, menu actions, light/dark appearance, 80%/100% scale and mobile navigation with local provider fixtures.
+
 ## [1.1.0-beta.8] — 2026-11-17
 
 - Rebuild Job Search with a compact search console, category chips, collapsible filters, listing cards, sorting, saved-job views and a career/source sidebar.
