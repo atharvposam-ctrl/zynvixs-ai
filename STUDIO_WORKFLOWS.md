@@ -320,3 +320,17 @@ Startup: retain `data`/`models`, extract the update and run `Zynvixs.bat` from t
 ![Email Agent workspace — Black appearance, loopback mail fixture](docs/images/email-workspace-dark.png)
 
 ![Mobile email composer](docs/images/email-composer-mobile.png)
+
+## Automation browser guide and portal banners (beta.15)
+
+Automation now opens with a browser-control hero banner and four career shortcut banners for Profile Builder, Resume Studio, Job Search and Applications. **Open browser workspace** scrolls/focuses the actual existing browser controls; it does not start a session or submit a form. A four-step guide covers choosing a retrieved job, opening/signing in manually, reading/preparing supported fields, and reviewing/filling before explicit submission approval. Existing setup commands, checklist saving and browser-session controls remain available below.
+
+LinkedIn, Naukri, Indeed and Glassdoor cards open real portal URLs in a separate tab only when selected. They are labeled **Outbound portal link · manual exploration**, not live feeds or verified application integrations. Generic browser filling is available only for compatible forms reached from a supported cached vacancy, and site redirects/different domains can require manual handling. The guide separately lists actual Remotive/Greenhouse/Lever retrieval support and links to Job Search source configuration. It does not promise LinkedIn Easy Apply, Naukri auto-apply, full-PC control, scheduled/unattended applications or guaranteed portal compatibility.
+
+Login, credentials, consent, uploads, CAPTCHA and MFA stay with the user. Unknown screening answers are not invented. An apparent submit click does not prove receipt; track Applied only after verifying employer confirmation. Keep Zynvixs and the visible browser running while working. Optional Playwright/Chromium, a visible desktop and a supported selected job are still required; no new credentials, external requests on page load or dependencies are introduced.
+
+Validation: production TypeScript/Vite build; 124 backend tests; existing 13-page light/dark 80%/100% and mobile regression; `scripts/check_automation_guide_ui.py` verifies browser-workspace focus, the missing-job gate, banner destinations, outbound portal URLs/labels, full-PC limitation, mobile overflow and reduced motion. No external portals were visited and no applications submitted for these guide checks. Live external portal compatibility was not newly validated.
+
+![Automation browser guide — White appearance](docs/images/automation-browser-guide-light.png)
+
+![Automation browser guide — Black appearance](docs/images/automation-browser-guide-dark.png)

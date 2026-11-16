@@ -1,3 +1,5 @@
+import { AutomationGuide } from "./AutomationGuide";
+import { CareerPageFooter } from "./CareerRecommendations";
 import { BrowserAssistant } from "./Workflows";
 import { useEffect, useState } from "react";
 import {
@@ -179,13 +181,32 @@ export function CareerDashboard({
   );
 }
 export { ResumeBuilder } from "./ResumeStudio";
-export function AutomationSetup() {
+export function AutomationSetup({
+  navigate,
+}: {
+  navigate: (page: string) => void;
+}) {
   const [notes, setNotes] = useState(""),
     [error, setError] = useState(""),
     [saved, setSaved] = useState(false);
   return (
     <section className="automation-setup">
-      <BrowserAssistant />
+      <AutomationGuide
+        navigate={navigate}
+        openBrowser={() => {
+          const el = document.getElementById("automation-browser-workspace");
+          el?.scrollIntoView({
+            block: "start",
+            behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
+              ? "instant"
+              : "smooth",
+          });
+          el?.focus({ preventScroll: true });
+        }}
+      />
+      <div id="automation-browser-workspace" tabIndex={-1}>
+        <BrowserAssistant />
+      </div>
       <small>BROWSER APPLICATION ASSISTANT</small>
       <h2>Prepare your application workspace.</h2>
       <p>
@@ -267,6 +288,7 @@ export function AutomationSetup() {
         <p role="status">Checklist saved locally. No automation has run.</p>
       )}
       {error && <p role="alert">{error}</p>}
+      <CareerPageFooter navigate={navigate} />
     </section>
   );
 }

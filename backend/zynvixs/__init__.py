@@ -5,5 +5,5 @@ unmodified third-party open-weight models (see config/models.json), each
 under its own license.
 """
 
-__version__ = "1.1.0-beta.14"
+__version__ = "1.1.0-beta.15"
 APP_NAME = "Zynvixs"

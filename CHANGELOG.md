@@ -2,6 +2,13 @@
 
 All notable changes to Zynvixs are listed here. Versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.1.0-beta.15] — 2026-11-17
+
+- Add five Automation banners with working profile, resume, job-search, application-tracker and browser-workspace destinations.
+- Explain the dedicated browser workflow, setup, review/approval and manual login/CAPTCHA/MFA/upload steps.
+- Add LinkedIn, Naukri, Indeed and Glassdoor portal cards clearly labeled outbound/manual, alongside supported Remotive/Greenhouse/Lever listing-source information.
+- Preserve existing browser/checklist behavior and explicitly distinguish it from unavailable full-PC control, unattended applications and verified portal-specific integrations.
+
 ## [1.1.0-beta.14] — 2026-11-17
 
 - Rebuild Email Agent with five career banners, explicit connection status, Inbox/Drafts/Sent/Follow-ups tabs, search/application filters and a responsive reading/composing split view.

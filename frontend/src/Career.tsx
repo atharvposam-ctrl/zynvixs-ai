@@ -568,7 +568,7 @@ export default function Career() {
               </h1>
             )}
             {page === "Resume Studio" && <ResumeBuilder />}
-            {page === "Automation" && <AutomationSetup />}
+            {page === "Automation" && <AutomationSetup navigate={setPage} />}
             {page === "Applications" && <ApplicationsBoard navigate={setPage} />}
             {page === "Profile Builder" && <><ProfileDiscovery navigate={(next) => { if (next === "Profile Builder") { document.querySelector<HTMLInputElement>('input[name="name"]')?.focus(); document.querySelector('.studio-workspace fieldset')?.scrollIntoView({ block: "start", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" }); } else setPage(next); }} /><ProfileEditor /></>}
             {page === "LinkedIn Optimizer" && <LinkedinStudio navigate={setPage} />}
