@@ -574,7 +574,7 @@ export default function Career() {
             {page === "LinkedIn Optimizer" && <LinkedinStudio navigate={setPage} />}
             {page === "Interview Prep" && <InterviewStudio navigate={setPage} />}
             {page === "Skills & Training" && <LearningStudio navigate={setPage} />}
-            {page === "Email Agent" && <EmailStudio />}
+            {page === "Email Agent" && <EmailStudio navigate={setPage} />}
             {page === "Settings" && <WorkspaceSettings navigate={setPage} />}
             {page === "Projects" && (
               <ProjectsWorkspace

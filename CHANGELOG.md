@@ -2,6 +2,13 @@
 
 All notable changes to Zynvixs are listed here. Versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.1.0-beta.14] — 2026-11-17
+
+- Rebuild Email Agent with five career banners, explicit connection status, Inbox/Drafts/Sent/Follow-ups tabs, search/application filters and a responsive reading/composing split view.
+- Link messages and drafts to applications, retain AI drafting and manual composition, and add saved-resume PDF/DOCX attachments with exact reviewed-byte snapshots.
+- Keep approval bound to the saved message and resume version, preserve duplicate-attempt protection for legacy messages, and record immutable accepted/failed send context without claiming delivery.
+- Add local, duplicate-safe email follow-up tasks shared with Career Dashboard. Credentials remain in the backend environment; no real recipients are contacted by acceptance tests.
+
 ## [1.1.0-beta.13] — 2026-11-17
 
 - Rebuild LinkedIn Optimizer around shared profile entry, editable LinkedIn drafts, real resume PDF preview/download and reviewed saved-job application preparation.

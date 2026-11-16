@@ -298,3 +298,25 @@ Validation: production TypeScript/Vite build, 120 backend tests and the existing
 ![LinkedIn career journey — White appearance, controlled profile](docs/images/linkedin-career-journey-light.png)
 
 ![LinkedIn career journey — Black appearance, controlled profile](docs/images/linkedin-career-journey-dark.png)
+
+## Email Agent workspace (beta.14)
+
+Email Agent now has five career banners: recruiter introduction, application follow-up, interview thank-you, resume selection and follow-up tasks. They open working drafting, attachment and reminder controls. Inbox/Drafts/Sent/Follow-ups tabs use existing persistent collections, with a message list and plain-text reader/composer, text search, application-link filtering and send-outcome filtering. Summary counts represent cached messages, actual saved email drafts, SMTP-accepted attempts and incomplete local email tasks. Unknown/loading counts show a dash. No external inbox is contacted on page open; **Retrieve real inbox messages** is explicit, read-only IMAP and caches the latest 20 fetched messages. Local application links survive later retrieval. Remote email images/HTML are not executed or fetched.
+
+Drafting supports manual text without mail credentials and model-assisted recruiter introductions, application messages, follow-ups, thank-you notes and interview replies using approved profile, selected application/resume and optional cached reply context. The AI does not infer a recipient or send. Selected application details can fill an empty recruiter address/resume only after you choose that action. Drafts, source-mail/application links and exact saved resume IDs persist; older unclassified drafts remain reviewable. One recipient address is supported per message.
+
+Resume attachments can be PDF or DOCX from an exact saved version. The final review includes sender, recipient, subject, body, filename, byte count and SHA-256. Reviewed bytes are snapshotted in the existing SQLite database; the SMTP MIME attachment uses those exact bytes. Changes to the draft, resume content/version or format require fresh review. The server enforces approval/hash matching and blocks duplicate attempts, retaining the legacy digest for messages without attachments so previous attempt records still protect against repeats. Accepted/failed histories retain the actual message/application/resume snapshot and attachment reference even after the draft changes. **Accepted by SMTP is not proof of delivery.** Failed/unknown attempts must be checked with the provider before considering another message; no automatic retry is performed. Sending never marks an application submitted.
+
+Follow-ups from a draft or cached message create date-validated, duplicate-safe tasks shared with Career Dashboard. Completion is saved and can be reopened from the Follow-ups tab. They are local reminders, not scheduled outbound emails or guaranteed OS/background notifications. Keep the app open to view them. No new credentials or runtime dependencies are required for offline composition, saved reminders or attachment preview.
+
+Mail access still requires configured IMAP/SMTP TLS or startTLS, provider-supported app passwords and a sender address through the existing `ZYNVIXS_*` backend environment variables shown in secure setup. The page never requests or stores passwords in profile fields/drafts/frontend code. Configuration does not claim connectivity until an explicit test succeeds. OAuth-only providers are unsupported and require a future authorized integration. The local model is separately required for AI wording; real model inference was not performed in this environment.
+
+Validation: production TypeScript/Vite build; **124 backend tests**, including legacy duplicate-hash compatibility, actual PDF/DOCX MIME bytes, resume-mutation rejection after review, immutable attachment history across DB restart, local mailbox association preservation and date/dedup checks. The existing 13-page regression passed, including missing mail credentials and review gating. `scripts/check_email_workspace_ui.py` runs isolated SQLite with loopback-only SMTP/IMAP fixtures, tests connection/inbox, disconnected-model state, draft save/review/edit invalidation, one explicit `.invalid` fixture send, duplicate rejection, exact attachment bytes, application links, persistent follow-ups and White/Black 80%/100% plus mobile composing. No real recipients are contacted, no real provider inbox is read and no real applications are submitted.
+
+Startup: retain `data`/`models`, extract the update and run `Zynvixs.bat` from the new folder. Configure the documented backend mail environment variables and restart to enable real inbox/sending; use `Setup.bat` only if dependencies are missing. Existing data and settings are retained.
+
+![Email Agent workspace — White appearance, loopback mail fixture](docs/images/email-workspace-light.png)
+
+![Email Agent workspace — Black appearance, loopback mail fixture](docs/images/email-workspace-dark.png)
+
+![Mobile email composer](docs/images/email-composer-mobile.png)
