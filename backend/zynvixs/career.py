@@ -33,7 +33,7 @@ class Record(BaseModel):
     due: str = ""
     status: str = Field(
         default="draft",
-        pattern=r"^(draft|reviewing|submitted|interview|offer|rejected|withdrawn)$",
+        pattern=r"^(saved|draft|reviewing|submitted|interview|offer|rejected|withdrawn)$",
     )
     job_id: str = ""
     resume_id: str = ""
@@ -109,6 +109,8 @@ def create(kind: str, record: Record):
             update={
                 "metadata": {
                     **record.metadata,
+                    "created_at": datetime.now(timezone.utc).isoformat(),
+                    "updated_at": datetime.now(timezone.utc).isoformat(),
                     "history": [
                         {
                             "from": "",
@@ -130,6 +132,12 @@ def create(kind: str, record: Record):
 @router.put("/{kind}/{ident}")
 def update(kind: str, ident: str, record: Record):
     validate(kind)
+    if kind == "tasks":
+        previous = next((r for r in records(kind) if r["id"] == ident), None)
+        if previous and previous.get("metadata", {}).get("application_id") and previous.get("complete", False) != record.complete:
+            from datetime import datetime, timezone
+            events = previous.get("metadata", {}).get("completion_history", []) + [{"at": datetime.now(timezone.utc).isoformat(), "complete": record.complete}]
+            record = record.model_copy(update={"metadata": {**record.metadata, "completion_history": events}})
     if kind == "applications":
         previous = next((r for r in records(kind) if r["id"] == ident), None)
         if previous is None:
@@ -154,7 +162,7 @@ def update(kind: str, ident: str, record: Record):
                 }
             ]
         record = record.model_copy(
-            update={"metadata": {**record.metadata, "history": history}}
+            update={"metadata": {**record.metadata, "created_at": previous.get("metadata", {}).get("created_at", ""), "updated_at": datetime.now(timezone.utc).isoformat(), "history": history}}
         )
     if (
         connection()

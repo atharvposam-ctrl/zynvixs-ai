@@ -427,6 +427,7 @@ def start_application(ident: str):
             job_id=ident,
             resume_id=job.get("resume_id", ""),
             status="draft",
+            metadata={"company": job["company"], "role": job["title"], "location": job["location"], "listing_url": job["url"], "source": job["source"]},
         ),
     )
 

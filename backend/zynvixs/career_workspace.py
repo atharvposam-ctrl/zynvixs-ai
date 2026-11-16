@@ -228,3 +228,53 @@ async def extract_document(file: UploadFile = File(...)):
             422, "Could not read this document. Use a valid text-based export."
         ) from exc
     return {"text": text[:50000]}
+
+
+@router.get("/applications/{ident}/context")
+def application_context(ident: str):
+    """Local context only. Opening details never changes application status."""
+    application = next((r for r in records("applications") if r["id"] == ident), None)
+    if application is None:
+        raise HTTPException(404, "Application not found.")
+    from .career_jobs import get_job
+    job = None
+    if application.get("job_id"):
+        try:
+            job = get_job(application["job_id"])
+        except HTTPException:
+            pass
+    resume = next((r for r in records("resumes") if r["id"] == application.get("resume_id")), None)
+    return {
+        "job": job,
+        "resume": {"id": resume["id"], "title": resume["title"]} if resume else None,
+        "profile": profile()["fields"],
+        "tasks": [r for r in records("tasks") if r.get("metadata", {}).get("application_id") == ident],
+    }
+
+
+class ApplicationReminder(BaseModel):
+    due: str = Field(max_length=10)
+    kind: str = Field(default="follow_up", pattern=r"^(follow_up|interview|deadline)$")
+
+
+@router.post("/applications/{ident}/reminder")
+def application_reminder(ident: str, body: ApplicationReminder):
+    with db._lock:
+        return _application_reminder(ident, body)
+
+
+def _application_reminder(ident: str, body: ApplicationReminder):
+    from datetime import date
+    application = next((r for r in records("applications") if r["id"] == ident), None)
+    if application is None:
+        raise HTTPException(404, "Save the application before creating a reminder.")
+    try:
+        if date.fromisoformat(body.due).isoformat() != body.due:
+            raise ValueError()
+    except ValueError:
+        raise HTTPException(422, "Choose a valid reminder date (YYYY-MM-DD).")
+    existing = next((r for r in records("tasks") if r.get("metadata", {}).get("application_id") == ident and r.get("metadata", {}).get("reminder_kind") == body.kind and r["due"] == body.due), None)
+    if existing:
+        return existing
+    label = {"follow_up": "Follow up", "interview": "Interview", "deadline": "Application deadline"}[body.kind]
+    return create("tasks", Record(title=(label + ": " + application["title"])[:300], content=application["content"], due=body.due, metadata={"application_id": ident, "reminder_kind": body.kind}))

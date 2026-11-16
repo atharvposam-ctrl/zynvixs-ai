@@ -2,6 +2,14 @@
 
 All notable changes to Zynvixs are listed here. Versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.1.0-beta.12] — 2026-11-17
+
+- Build Applications into a career command center with five working banners, actual saved-record summary counts, searchable/filterable Kanban and list views, reminders and activity history.
+- Preserve legacy application records/statuses and add a Saved stage. Preparing includes existing Draft/Reviewing records; Applied continues to require explicit confirmation.
+- Add a responsive details drawer with company/role/location, application and interview dates, deadlines, next actions, recruiter contacts, exact resume version, editable cover letter and notes.
+- Add validated, duplicate-safe local application reminders shared with Career Dashboard, with persisted completion events and no claimed background email/OS alerts.
+- Connect saved application context to profile review, linked-resume tailoring, interview preparation and the existing reviewed browser assistant. No real applications are submitted by opening a tool.
+
 ## [1.1.0-beta.11] — 2026-11-17
 
 - Add a prominent full-width career-profile banner directly beneath empty or short Job Search results, with working Profile Builder and LinkedIn destinations.

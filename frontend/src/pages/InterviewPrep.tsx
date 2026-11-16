@@ -13,6 +13,7 @@ export function InterviewStudio({navigate}:{navigate:(page:string)=>void}) {
     [answer, setAnswer] = useState(""),
     [busy, setBusy] = useState(false);
   const data = active ? parse(active) : null;
+  useEffect(()=>{const target=sessionStorage.getItem('zynvixs.interview-role');if(target){setRole(target);sessionStorage.removeItem('zynvixs.interview-role');}},[]);
   useEffect(() => {
     void Promise.all([
       call("career/resumes"),

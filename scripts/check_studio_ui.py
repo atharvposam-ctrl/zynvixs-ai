@@ -243,6 +243,7 @@ async def main():
             await page.get_by_role("status").filter(
                 has_text="Application details saved"
             ).wait_for()
+            await page.get_by_role("button", name="Close details", exact=True).click()
             page.once("dialog", lambda d: d.accept())
             await page.get_by_label("Status", exact=True).select_option("submitted")
             await page.get_by_role("status").filter(
