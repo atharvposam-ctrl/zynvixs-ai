@@ -277,3 +277,15 @@
 @media(prefers-reduced-motion:reduce) {.job-banner-paper {animation:none;}}
 @media(max-width:1100px) {.job-career-poster {padding:18px;}.job-career-poster>h3 {font-size:21px;}.job-growth-banner {flex-wrap:wrap;}.job-growth-banner>button {margin-left:75px;}}
 @media(max-width:550px) {.job-poster-grid {grid-template-columns:1fr;}.job-career-poster>h3 {min-height:0;font-size:25px;}.job-career-poster>p {min-height:0;}.job-banner-art {height:175px;}.job-spotlight-heading {align-items:flex-start;flex-direction:column;gap:7px;}.job-growth-banner {padding:19px;}.job-growth-banner>button {margin-left:0;width:100%;justify-content:space-between;}}
+/* A full-width profile campaign occupies the results-column gap, not the sidebar. */
+.job-profile-gap-banner {display:grid;grid-template-columns:minmax(0,1fr) 180px;gap:14px;align-items:center;position:relative;overflow:hidden;border-radius:20px;padding:25px;margin:0 0 17px;color:#fff;background:linear-gradient(115deg,#163579,#2561ad 70%,#3d78c1);}
+.job-profile-gap-banner small {font-size:9px;font-weight:700;letter-spacing:.13em;opacity:.9;}
+.job-profile-gap-banner h3 {font-size:27px;line-height:1.12;letter-spacing:-.03em;margin:12px 0;max-width:420px;}
+:root[data-theme] .career-shell .job-profile-gap-banner p {font-size:12px;line-height:1.7;color:#e3eeff;max-width:480px;}
+.job-profile-banner-actions {display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;}
+:root[data-theme] .career-shell .job-profile-banner-actions button {display:flex;align-items:center;gap:9px;border-radius:23px;background:white;color:#173b80;border:1px solid white;font-size:11px;font-weight:650;padding:11px 14px;}
+:root[data-theme] .career-shell .job-profile-banner-actions button+button {background:transparent;color:#fff;border-color:#ffffff80;}
+.job-profile-gap-art {color:#d4e6ff;}.job-profile-gap-art .job-banner-art {height:180px;}
+.job-results-column>.job-career-banners {margin-top:20px;}
+@media(max-width:1100px) {.job-profile-gap-banner {grid-template-columns:minmax(0,1fr) 120px;padding:20px;}.job-profile-gap-banner h3 {font-size:24px;}.job-profile-gap-art .job-banner-art {height:150px;}}
+@media(max-width:600px) {.job-profile-gap-banner {grid-template-columns:1fr;}.job-profile-gap-art {display:none;}.job-profile-banner-actions {flex-direction:column;}.job-profile-banner-actions button {justify-content:space-between;}}

@@ -41,6 +41,14 @@ async def check():
             await page.goto(harness.BASE)
             await nav('Job Search')
             banners=page.get_by_role('region',name='Career spotlight banners',exact=True)
+            await page.wait_for_function("""() => {const e=document.querySelector('.job-results-column>.job-empty-state'),b=document.querySelector('.job-results-column>.job-career-banners');if(!e||!b)return false;const gap=b.getBoundingClientRect().top-e.getBoundingClientRect().bottom;return gap>=0&&gap<45;}""")
+            await page.locator('.job-results-layout').screenshot(path=str(harness.SHOTS/'job-empty-gap-filled.png'))
+            await banners.get_by_role('button',name='Build my career profile',exact=True).click()
+            await page.get_by_label('Full name',exact=True).wait_for()
+            await nav('Job Search')
+            await banners.get_by_role('button',name='Explore LinkedIn tools',exact=True).click()
+            await page.get_by_role('heading',name='LinkedIn Optimizer',exact=True).wait_for()
+            await nav('Job Search')
             await banners.get_by_role('button',name='Explore Resume Studio',exact=True).click()
             await page.get_by_role('complementary',name='Resume output',exact=True).wait_for()
             await nav('Job Search')
@@ -145,7 +153,7 @@ async def check():
             assert await page.locator('.job-banner-paper').first.evaluate('(e)=>getComputedStyle(e).animationName')=='none'
             assert not errors,errors
             await b.close()
-    print('PASS: banner and featured destinations, reduced motion, local auto-fill/provenance, preserves edits and explicit replace, no implicit search, real search/cache/save/draft API flows against labeled provider fixtures, failed provider and auto-fill retry, details, tailoring, browser handoff, resume invalidation, White/Black 80/100% and mobile. No real applications submitted.')
+    print('PASS: empty-state banner placement (no large gap), profile/LinkedIn/banner and featured destinations, reduced motion, local auto-fill/provenance, preserves edits and explicit replace, no implicit search, real search/cache/save/draft API flows against labeled provider fixtures, failed provider and auto-fill retry, details, tailoring, browser handoff, resume invalidation, White/Black 80/100% and mobile. No real applications submitted.')
 
 if __name__=='__main__':
     original=subprocess.Popen

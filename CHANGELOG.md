@@ -2,6 +2,12 @@
 
 All notable changes to Zynvixs are listed here. Versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.1.0-beta.11] — 2026-11-17
+
+- Add a prominent full-width career-profile banner directly beneath empty or short Job Search results, with working Profile Builder and LinkedIn destinations.
+- Keep the illustrated resume/interview posters and training strip underneath; insert the banner group after the second listing in longer result lists.
+- Verify the empty-state-to-banner gap, navigation, reduced motion and White/Black/mobile layouts without changing search or stored data.
+
 ## [1.1.0-beta.10] — 2026-11-17
 
 - Add illustrated Resume Studio and Interview Prep banners plus a wide Skills & Training banner to the Job Search results column, including its empty state.

@@ -254,3 +254,11 @@ Checks: production TypeScript/Vite build; 117 backend tests; isolated Job Search
 ![Job Search career banners — local SVG artwork](docs/images/job-career-banners-light.png)
 
 ![Job Search career banners in Black appearance](docs/images/job-career-banners-dark.png)
+
+## Filling the Job Search results gap (beta.11)
+
+A full-width blue profile banner now sits at the top of the existing Career spotlight group, with real Profile Builder and LinkedIn Optimizer actions. For an empty or single-result list, the group follows the empty state or card immediately, rather than leaving a large white area alongside the sidebar. Longer lists show the group after the second vacancy instead of burying it after all results. The existing resume/interview illustrated posters and training strip remain below the new banner. Promotional content stays clearly labeled and separate from actual vacancies.
+
+Verification: production TypeScript/Vite build and isolated Job Search UI checks. The script measures the empty-state-to-banner gap (under 45 screen pixels), exercises profile/LinkedIn and other banner destinations, and checks White/Black at 80%/100%, mobile overflow and reduced motion alongside existing save/draft/cache/search flows. No real applications are submitted; no backend data schema, external connections or setup requirements change. Restart from the newly extracted beta.11 folder to load the updated bundled interface while preserving your existing data/models.
+
+![Banners directly fill the Job Search empty-results gap](docs/images/job-search-gap-filled.png)

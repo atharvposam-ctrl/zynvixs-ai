@@ -22,6 +22,10 @@ function BannerArt({ variant }: { variant: string }) {
 export function JobCareerBanners({ navigate }: { navigate:(page:string)=>void }) {
   return <section className="job-career-banners" aria-label="Career spotlight banners">
     <div className="job-spotlight-heading"><h3>Career spotlight</h3><span>Zynvixs tools · separate from job listings</span></div>
+    <div className="job-profile-gap-banner">
+      <div><small>YOUR PROFILE. YOUR POSSIBILITIES.</small><h3>Make your next introduction count.</h3><p>Bring your real experience into a professional profile, a stronger resume and your LinkedIn story.</p><div className="job-profile-banner-actions"><button onClick={()=>navigate('Profile Builder')}>Build my career profile<ArrowRight size={16}/></button><button onClick={()=>navigate('LinkedIn Optimizer')}>Explore LinkedIn tools<ArrowRight size={16}/></button></div></div>
+      <div className="job-profile-gap-art"><BannerArt variant="resume"/></div>
+    </div>
     <div className="job-poster-grid">{spotlights.map(b=><div key={b.page} className={`job-career-poster job-poster-${b.tone}`}><small>{b.tag}</small><h3>{b.title}</h3><BannerArt variant={b.tone}/><p>{b.text}</p><button onClick={()=>navigate(b.page)}>{b.action}<ArrowRight size={16}/></button></div>)}</div>
     <div className="job-growth-banner"><span className="job-growth-symbol" aria-hidden="true"><Layers size={34}/><Sparkles size={20}/></span><div><small>KEEP YOUR NEXT MOVE MOVING</small><h3>Build skills. Show your progress.</h3><p>Turn a learning goal into saved practice and evidence.</p></div><button onClick={()=>navigate('Skills & Training')}>Explore training<ArrowRight size={16}/></button></div>
   </section>;
