@@ -334,3 +334,16 @@ Validation: production TypeScript/Vite build; 124 backend tests; existing 13-pag
 ![Automation browser guide — White appearance](docs/images/automation-browser-guide-light.png)
 
 ![Automation browser guide — Black appearance](docs/images/automation-browser-guide-dark.png)
+
+
+## Chat and Settings control alignment (beta.16)
+
+Fixed-size icon buttons now use zero padding and centered flex alignment. Attachment, send/stop, file removal and Settings close retain their original actions. Send uses the selected theme's primary color; Settings switches retain their saved state without inherited text-button borders/padding.
+
+Validation: production TypeScript/Vite build and targeted Playwright checks for White/Black at 80%/100%, mobile overflow, centered icons, actual file chooser/upload/removal, persisted Settings switch and modal close. Click/Enter dispatch and Shift+Enter newline were checked with controlled request capture; no model inference, external mail or real applications were performed. Screenshot regression artifacts were captured across all 13 pages. No backend behavior changed or new connection configuration is needed.
+
+Extract the updated ZIP, preserve existing `data` and `models` folders, and restart `Zynvixs.bat`. Existing installation requirements remain unchanged. Antivirus verification is not implied by these UI checks.
+
+![Centered composer controls — White](docs/images/chat-controls-aligned-light.png)
+
+![Centered Settings controls — Black](docs/images/settings-controls-aligned-dark.png)

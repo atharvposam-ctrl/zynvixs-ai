@@ -2,6 +2,12 @@
 
 All notable changes to Zynvixs are listed here. Versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.1.0-beta.16] — 2026-11-17
+
+- Center attachment, send/stop, file-removal and Settings-close icons by isolating fixed-size controls from generic button padding.
+- Restore theme-aware circular Send styling, align Settings switches and retain keyboard focus indicators.
+- Preserve existing handlers, settings and user data; no new runtime dependencies.
+
 ## [1.1.0-beta.15] — 2026-11-17
 
 - Add five Automation banners with working profile, resume, job-search, application-tracker and browser-workspace destinations.
