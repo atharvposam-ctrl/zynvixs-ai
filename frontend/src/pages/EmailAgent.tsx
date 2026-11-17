@@ -5,7 +5,6 @@ import {
   Plus,
   RefreshCw,
   Paperclip,
-  Search,
 } from "lucide-react";
 import { call } from "../Workflows";
 import { EmailBanners } from "../EmailBanners";
@@ -720,7 +719,6 @@ export function EmailStudio({
           <>
             <div className="email-list-toolbar">
               <label>
-                <Search size={15} />
                 <input
                   aria-label="Search emails"
                   placeholder="Search subject, sender or message…"
