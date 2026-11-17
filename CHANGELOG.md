@@ -2,6 +2,13 @@
 
 All notable changes to Zynvixs are listed here. Versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.1.0-beta.17] — 2026-11-17
+
+- Rebuild Resume Studio's PDF review with real page thumbnails, direct page selection, zoom/fit controls and actual-versus-target page counts.
+- Add custom page targets, A4/US Letter export settings, page-number footers and context/output-limit warnings for generated drafts.
+- Keep left-side editing and right-side PDF review on desktop; add Editor/Preview navigation on mobile. Preserve prior versions and expose DOCX alongside PDF.
+- Verify a 17-page supplied-text PDF through page 12 and the last page, exact preview-download bytes, layout/version persistence and model-disconnected handling.
+
 ## [1.1.0-beta.16] — 2026-11-17
 
 - Center attachment, send/stop, file-removal and Settings-close icons by isolating fixed-size controls from generic button padding.

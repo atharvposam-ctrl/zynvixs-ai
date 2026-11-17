@@ -437,3 +437,42 @@
 :root[data-theme] .career-shell button.icon-btn:focus-visible,
 :root[data-theme] .career-shell button.send:focus-visible,
 :root[data-theme] .career-shell button.switch:focus-visible {outline:2px solid var(--accent);outline-offset:3px;}
+
+/* Resume workbench: consistent theme surfaces and usable multi-page output. */
+:root[data-theme] .resume-studio-heading p,
+:root[data-theme] .resume-input-panel .length-help,
+:root[data-theme] .resume-output-panel .pdf-resume-panel > p {color:var(--text-2);}
+:root[data-theme] .resume-input-panel,
+:root[data-theme] .resume-output-panel {background:var(--surface);border-color:var(--border);}
+:root[data-theme] .resume-generation-actions > button:first-child {color:var(--on-primary);}
+.pdf-view-controls {display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;}
+.pdf-view-controls label {flex:1;min-width:120px;}
+.pdf-page-browser {display:grid;grid-template-columns:84px minmax(0,1fr);gap:12px;min-width:0;}
+.pdf-thumbnails {max-height:65vh;overflow:auto;display:flex;flex-direction:column;gap:10px;padding:3px;}
+:root[data-theme] .career-shell .pdf-thumbnails button {padding:5px;border-radius:7px;display:grid;gap:4px;justify-items:center;}
+.pdf-thumbnails button[aria-current="page"] {outline:2px solid var(--primary);outline-offset:-2px;}
+.pdf-thumbnails canvas {width:100%;height:auto;background:white;}
+.pdf-resume-panel .pdf-canvas-wrap canvas {width:var(--pdf-zoom-width,100%);max-width:none;height:auto;}
+.pdf-resume-panel .pdf-canvas-wrap {min-width:0;max-height:65vh;align-self:start;}
+.pdf-length-status {padding:10px;border:1px solid var(--border);border-radius:8px;font-size:12px;}
+.resume-mobile-tabs {display:none;}
+@media(max-width:700px){
+ .resume-mobile-tabs {display:flex;gap:10px;margin-bottom:16px;}
+ .resume-mobile-tabs button {flex:1;}
+ .resume-mobile-tabs button[aria-pressed="true"] {outline:2px solid var(--primary);}
+ .resume-studio-workspace[data-mobile-view="editor"] .resume-output-panel {display:none;}
+ .resume-studio-workspace[data-mobile-view="preview"] .resume-input-panel {display:none;}
+ .pdf-page-browser {grid-template-columns:1fr;}
+ .pdf-thumbnails {flex-direction:row;max-height:115px;}
+ .pdf-thumbnails button {min-width:60px;max-width:60px;}
+}
+
+:root[data-theme] .career-shell .resume-generation-actions > button:first-child {background:var(--primary);color:var(--on-primary);border-color:var(--primary);}
+/* Keep a wrapped mobile toolbar from shrinking over the document heading. */
+.career-top {flex-shrink:0;}
+@media(max-width:700px) {
+ .career-top {flex-wrap:wrap;height:auto;}
+ .career-top .top-actions {width:100%;gap:8px;flex-wrap:wrap;}
+ .career-top .top-actions select {max-width:100%;}
+ .resume-studio-heading {flex-wrap:wrap;}
+}

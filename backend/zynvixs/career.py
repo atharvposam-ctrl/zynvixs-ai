@@ -192,9 +192,11 @@ def delete(kind: str, ident: str):
 
 class ResumeRequest(BaseModel):
     role: str = Field(min_length=1, max_length=200)
-    facts: str = Field(min_length=20, max_length=20000)
+    facts: str = Field(min_length=20, max_length=100000)
     job_description: str = Field(default="", max_length=12000)
-    length_preference: Literal["1-2", "4-5", "12"] = "1-2"
+    length_preference: Literal["1-2", "4-5", "12", "custom"] = "1-2"
+    custom_pages: int = Field(default=12, ge=1, le=30)
+    paper_size: Literal["a4", "letter"] = "a4"
 
 
 @router.post("/actions/resume")
@@ -226,7 +228,8 @@ async def generate_resume(body: ResumeRequest, request: Request = None):
         target = {
             "1-2": "a concise 1–2 page resume",
             "4-5": "a detailed 4–5 page CV",
-            "12": "an extended CV targeting 12 pages",
+            "12": "an extended CV targeting up to 12 pages",
+            "custom": f"a CV targeting up to {body.custom_pages} pages",
         }[body.length_preference]
         prompt += (
             "\nLength preference: "
@@ -240,10 +243,10 @@ async def generate_resume(body: ResumeRequest, request: Request = None):
                 409,
                 "The selected model context is too small for this source. Shorten the input or increase context in Settings.",
             )
-        budget = min(
-            {"1-2": 2400, "4-5": 4800, "12": 9000}[body.length_preference], available
-        )
+        desired_budget = {"1-2": 2400, "4-5": 4800, "12": 9000, "custom": min(16000, body.custom_pages * 900)}[body.length_preference]
+        budget = min(desired_budget, available)
         text = ""
+        finish_reason = ""
         async for delta in manager.stream(
             [
                 {
@@ -258,6 +261,8 @@ async def generate_resume(body: ResumeRequest, request: Request = None):
                 raise HTTPException(499, "Resume generation cancelled.")
             if delta.kind == "content":
                 text += delta.text
+            if delta.finish_reason:
+                finish_reason = delta.finish_reason
         if not text.strip():
             raise HTTPException(502, "The model returned no resume. Please retry.")
         return create(
@@ -270,6 +275,10 @@ async def generate_resume(body: ResumeRequest, request: Request = None):
                     "target_role": body.role,
                     "length_preference": body.length_preference,
                     "output_token_limit": budget,
+                    "paper_size": body.paper_size,
+                    "context_limited": budget < desired_budget,
+                    "custom_pages": body.custom_pages,
+                    "finish_reason": finish_reason,
                 },
             ),
         )
@@ -316,9 +325,13 @@ def export_resume(ident: str, format: str = "docx", inline: bool = False):
         from docx import Document
 
         doc = Document()
-        from docx.shared import Inches, Pt
+        from docx.shared import Inches, Pt, Mm
 
         for section in doc.sections:
+            if record.get("metadata", {}).get("paper_size", "a4") == "letter":
+                section.page_width, section.page_height = Inches(8.5), Inches(11)
+            else:
+                section.page_width, section.page_height = Mm(210), Mm(297)
             section.top_margin = section.bottom_margin = Inches(0.65)
             section.left_margin = section.right_margin = Inches(0.75)
         doc.styles["Normal"].font.name = "Calibri"
@@ -346,6 +359,8 @@ def export_resume(ident: str, format: str = "docx", inline: bool = False):
         content = render(
             record["content"],
             record.get("metadata", {}).get("length_preference", "1-2"),
+            record.get("metadata", {}).get("paper_size", "a4"),
+            record.get("metadata", {}).get("custom_pages", 12),
         )
         buf.write(content)
         mime = "application/pdf"

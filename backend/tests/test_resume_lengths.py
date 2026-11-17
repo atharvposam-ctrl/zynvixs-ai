@@ -109,3 +109,23 @@ def test_cancelled_generation_does_not_save_partial_content(monkeypatch):
             )
         )
     assert exc.value.status_code == 499 and career.records("resumes") == []
+
+
+def test_custom_layout_and_output_limit_are_recorded(monkeypatch):
+    monkeypatch.setattr(manager, 'status', lambda: {'loaded': True})
+    monkeypatch.setattr(manager, 'loaded', SimpleNamespace(context_length=4096))
+    async def stream(messages, params):
+        yield Delta(kind='content', text='# Reviewed candidate\n\n## Skills\nPython')
+        yield Delta(kind='done', finish_reason='length')
+    monkeypatch.setattr(manager, 'stream', stream)
+    response=client.post('/api/career/actions/resume',json={'role':'Developer','facts':'Python portfolio with documented source facts.','length_preference':'custom','custom_pages':12,'paper_size':'letter'})
+    assert response.status_code==200,response.text
+    row=response.json()
+    assert row['metadata']['context_limited'] is True
+    assert row['metadata']['finish_reason']=='length'
+    assert row['metadata']['custom_pages']==12
+    pdf=PdfReader(io.BytesIO(client.get(f'/api/career/resumes/{row["id"]}/export?format=pdf').content))
+    assert len(pdf.pages)==1
+    assert float(pdf.pages[0].mediabox.width)==612
+    invalid=client.post('/api/career/actions/resume',json={'role':'Developer','facts':'Python portfolio with documented source facts.','length_preference':'custom','custom_pages':0})
+    assert invalid.status_code==422

@@ -12,6 +12,9 @@ export function ResumeBuilder() {
       return value;
     }),
     [length, setLength] = useState("1-2"),
+    [customPages, setCustomPages] = useState(12),
+    [paper, setPaper] = useState("a4"),
+    [view, setView] = useState("editor"),
     [saved, setSaved] = useState<Item | null>(null),
     [draft, setDraft] = useState(""),
     [busy, setBusy] = useState(false),
@@ -43,6 +46,8 @@ export function ResumeBuilder() {
             ),
           );
           setLength(String(row.metadata?.length_preference || "1-2"));
+          setPaper(String(row.metadata?.paper_size || "a4"));
+          setCustomPages(Number(row.metadata?.custom_pages || 12));
         }
       })
       .catch((e) => setError(String(e)));
@@ -80,10 +85,13 @@ export function ResumeBuilder() {
           facts,
           job_description: description,
           length_preference: length,
+          paper_size: paper,
+          custom_pages: customPages,
         },
         controller.current.signal,
       );
       await accept(row);
+      setView("preview");
       setMessage("AI draft saved. Review the actual PDF on the right.");
     } catch (e) {
       if (e instanceof DOMException && e.name === "AbortError")
@@ -120,6 +128,13 @@ export function ResumeBuilder() {
     }
   }
   async function saveText(content: string, aiEdit = false) {
+    if (
+      length === "custom" &&
+      (!Number.isInteger(customPages) || customPages < 1 || customPages > 30)
+    ) {
+      setError("Choose a custom page target from 1 to 30.");
+      return;
+    }
     setBusy(true);
     setError("");
     try {
@@ -133,10 +148,13 @@ export function ResumeBuilder() {
           kind: aiEdit ? "reviewed_resume" : "supplied_text",
           target_role: role,
           length_preference: length,
+          paper_size: paper,
+          custom_pages: customPages,
           ...(aiEdit ? { parent_id: saved?.id } : {}),
         },
       });
       await accept(row);
+      setView("preview");
       setMessage(
         aiEdit
           ? "New version saved and PDF refreshed."
@@ -149,7 +167,7 @@ export function ResumeBuilder() {
     }
   }
   return (
-    <section className="resume-studio-workspace">
+    <section className="resume-studio-workspace" data-mobile-view={view}>
       <header className="resume-studio-heading">
         <div>
           <small>RESUME STUDIO</small>
@@ -160,6 +178,24 @@ export function ResumeBuilder() {
         </div>
         <span className="studio-local-tag">Local workspace</span>
       </header>
+      <div
+        className="resume-mobile-tabs"
+        role="group"
+        aria-label="Resume workspace view"
+      >
+        <button
+          aria-pressed={view === "editor"}
+          onClick={() => setView("editor")}
+        >
+          Editor
+        </button>
+        <button
+          aria-pressed={view === "preview"}
+          onClick={() => setView("preview")}
+        >
+          Preview
+        </button>
+      </div>
       <div className="resume-workbench">
         <div className="resume-input-panel">
           <h3>Resume inputs</h3>
@@ -192,9 +228,48 @@ export function ResumeBuilder() {
               >
                 <option value="1-2">1–2 pages · concise resume</option>
                 <option value="4-5">4–5 pages · detailed CV</option>
-                <option value="12">12 pages · extended CV</option>
+                <option value="12">Up to 12 pages · extended CV</option>
+                <option value="custom">Custom page target</option>
               </select>
             </label>
+            {length === "custom" && (
+              <label>
+                Custom page target
+                <input
+                  aria-label="Custom page target"
+                  disabled={busy}
+                  type="number"
+                  min={1}
+                  max={30}
+                  required
+                  value={customPages}
+                  onChange={(e) => setCustomPages(Number(e.target.value))}
+                />
+              </label>
+            )}
+            <label>
+              Paper size
+              <select
+                aria-label="Resume paper size"
+                value={paper}
+                disabled={busy}
+                onChange={(e) => setPaper(e.target.value)}
+              >
+                <option value="a4">A4</option>
+                <option value="letter">US Letter</option>
+              </select>
+            </label>
+            {saved &&
+              (length !== String(saved.metadata?.length_preference || "1-2") ||
+                paper !== String(saved.metadata?.paper_size || "a4") ||
+                (length === "custom" &&
+                  customPages !==
+                    Number(saved.metadata?.custom_pages || 12))) && (
+                <p role="status">
+                  Layout settings changed. Save edits & refresh PDF to apply
+                  them to a new version.
+                </p>
+              )}
             <p className="length-help">
               This target changes AI detail and PDF layout. Actual page count is
               shown in the preview. Short sources are never padded with invented
@@ -208,7 +283,7 @@ export function ResumeBuilder() {
                 aria-label="Resume source information"
                 required
                 minLength={20}
-                maxLength={20000}
+                maxLength={100000}
                 value={facts}
                 onChange={(e) => setFacts(e.target.value)}
                 placeholder="Paste your real experience, education, skills and achievements."
@@ -300,6 +375,8 @@ export function ResumeBuilder() {
                   String(row.metadata?.target_role || source?.role || ""),
                 );
                 setLength(String(row.metadata?.length_preference || "1-2"));
+                setPaper(String(row.metadata?.paper_size || "a4"));
+                setCustomPages(Number(row.metadata?.custom_pages || 12));
               }}
               onUse={(text) => {
                 setFacts(text);
@@ -322,15 +399,47 @@ export function ResumeBuilder() {
                 {String(saved.metadata?.length_preference || "not specified")}.
                 The page counter below shows the actual PDF length.
               </p>
+              {(saved.metadata?.context_limited === true ||
+                saved.metadata?.finish_reason === "length") && (
+                <p role="status">
+                  The model reached an output or context limit. This draft may
+                  be incomplete. Review the ending, increase model context where
+                  supported, or work on fewer sections at a time.
+                </p>
+              )}
+              <a
+                href={"/api/career/resumes/" + saved.id + "/export?format=docx"}
+              >
+                Download saved DOCX
+              </a>
               <PdfResumePreview
                 key={saved.id}
                 id={saved.id}
                 title={saved.title}
                 text={saved.content}
-                stale={draft !== saved.content}
+                targetPages={
+                  saved.metadata?.length_preference === "custom"
+                    ? Number(saved.metadata?.custom_pages || 12)
+                    : Number(
+                        String(saved.metadata?.length_preference || "1-2")
+                          .split("-")
+                          .pop(),
+                      )
+                }
+                stale={
+                  draft !== saved.content ||
+                  length !==
+                    String(saved.metadata?.length_preference || "1-2") ||
+                  paper !== String(saved.metadata?.paper_size || "a4") ||
+                  (length === "custom" &&
+                    customPages !== Number(saved.metadata?.custom_pages || 12))
+                }
                 previewId="studio-resume-pdf"
                 staleMessage="The editor has unsaved changes. Use Save edits & refresh PDF to update this preview and download."
-                onEdit={() => setEditing(true)}
+                onEdit={() => {
+                  setEditing(true);
+                  setView("editor");
+                }}
               />
             </>
           ) : (

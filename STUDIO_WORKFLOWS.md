@@ -347,3 +347,17 @@ Extract the updated ZIP, preserve existing `data` and `models` folders, and rest
 ![Centered composer controls — White](docs/images/chat-controls-aligned-light.png)
 
 ![Centered Settings controls — Black](docs/images/settings-controls-aligned-dark.png)
+
+## Paginated Resume Studio (beta.17)
+
+The desktop editor and saved-PDF output remain side by side. Mobile offers Editor/Preview buttons to avoid an excessively long stacked form. Review every real PDF page through thumbnail buttons, Previous/Next or the page selector; choose Fit to width or 75/100/125/150% preview zoom. The PDF download uses the exact already-previewed blob. DOCX remains available as an editable Word document; its pagination can differ between Word applications.
+
+Choose 1–2, 4–5, up to 12 pages or a custom 1–30 page target, plus A4 or US Letter. Layout changes require saving a new version and disable the old PDF download until saved. Actual count is displayed with an explanation when it differs from the target. No artificial facts, duplicated content or blank pages are added; long supplied content is retained even if it exceeds the target. Model context/output limits are recorded and surfaced when reported. Page targets cannot guarantee document length or a complete live model response. Longer source input is supported, with an actionable model-context error when it cannot fit. Generation cancellation and earlier saved versions remain available.
+
+Validation: production TypeScript/Vite build; 125 backend tests; `check_resume_studio_ui.py` (editing/version refresh, PDF, presets, disconnected model, cancellation and layouts); `check_resume_pagination_ui.py` (17-page supplied-text fixture, page 12/last/previous, thumbnails, zoom/fit, exact preview-download bytes, A4/Letter, custom version persistence, DOCX, mobile and White/Black 80/100%). Tests used temporary data and controlled model streams where required. No live model inference or RTX hardware performance was verified. Existing saved data is retained; no new runtime dependencies or credentials are required.
+
+Startup: extract the updated ZIP into your chosen app installation, preserve `data` and `models`, and restart `Zynvixs.bat`. Run `Setup.bat` if dependencies are missing. AI drafting requires an installed, loaded model; supplied-text editing, PDF preview and export work without one.
+
+![Paginated PDF review — White](docs/images/resume-pagination-light.png)
+
+![Paginated PDF review — Black](docs/images/resume-pagination-dark.png)

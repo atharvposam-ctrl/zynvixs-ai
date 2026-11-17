@@ -15,6 +15,7 @@ export function PdfResumePreview({
   previewId = "profile-resume-pdf",
   staleMessage,
   onEdit,
+  targetPages,
 }: {
   id: string;
   title: string;
@@ -24,6 +25,7 @@ export function PdfResumePreview({
   previewId?: string;
   staleMessage?: string;
   onEdit?: () => void;
+  targetPages?: number;
 }) {
   const [pdf, setPdf] = useState<PDFDocumentProxy | null>(null),
     [url, setUrl] = useState(""),
@@ -32,6 +34,8 @@ export function PdfResumePreview({
     [loading, setLoading] = useState(true),
     [rendering, setRendering] = useState(false),
     [retry, setRetry] = useState(0);
+  const [zoom, setZoom] = useState("fit");
+  const [paperWidth, setPaperWidth] = useState(612);
   const [renderedPage, setRenderedPage] = useState(0);
   const canvas = useRef<HTMLCanvasElement>(null);
   const section = useRef<HTMLElement>(null);
@@ -103,6 +107,7 @@ export function PdfResumePreview({
       try {
         const source = await pdf.getPage(page);
         if (!active || !canvas.current) return;
+        setPaperWidth(source.getViewport({ scale: 1 }).width);
         const viewport = source.getViewport({ scale: 1.5 });
         canvas.current.width = viewport.width;
         canvas.current.height = viewport.height;
@@ -166,6 +171,14 @@ export function PdfResumePreview({
       )}
       {pdf && !error && (
         <>
+          {targetPages && pdf.numPages !== targetPages && (
+            <p role="status" className="pdf-length-status">
+              Actual length: {pdf.numPages} pages; requested target:{" "}
+              {targetPages}. Page count depends on supplied facts, model output
+              and paper layout. No facts or blank pages are added to fill the
+              target.
+            </p>
+          )}
           <div className="pdf-toolbar">
             <button
               disabled={rendering || page <= 1}
@@ -183,12 +196,66 @@ export function PdfResumePreview({
               Next page
             </button>
           </div>
-          <div className="pdf-canvas-wrap">
-            <canvas
-              ref={canvas}
-              role="img"
-              aria-label={"Resume PDF page " + page}
-            />
+          <div className="pdf-view-controls">
+            <label>
+              Go to page
+              <select
+                aria-label="Go to PDF page"
+                value={page}
+                onChange={(e) => setPage(Number(e.target.value))}
+              >
+                {Array.from({ length: pdf.numPages }, (_, i) => (
+                  <option key={i + 1} value={i + 1}>
+                    Page {i + 1}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Preview zoom
+              <select
+                aria-label="PDF preview zoom"
+                value={zoom}
+                onChange={(e) => setZoom(e.target.value)}
+              >
+                <option value="fit">Fit to width</option>
+                {[75, 100, 125, 150].map((v) => (
+                  <option key={v} value={v}>
+                    {v}%
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+          <div className="pdf-page-browser">
+            <nav className="pdf-thumbnails" aria-label="PDF page thumbnails">
+              {Array.from({ length: pdf.numPages }, (_, i) => (
+                <PdfThumbnail
+                  key={i + 1}
+                  pdf={pdf}
+                  number={i + 1}
+                  selected={page === i + 1}
+                  onSelect={() => setPage(i + 1)}
+                />
+              ))}
+            </nav>
+            <div
+              className="pdf-canvas-wrap"
+              style={
+                {
+                  "--pdf-zoom-width":
+                    zoom === "fit"
+                      ? "100%"
+                      : `${(Number(zoom) * paperWidth) / 100}px`,
+                } as React.CSSProperties
+              }
+            >
+              <canvas
+                ref={canvas}
+                role="img"
+                aria-label={"Resume PDF page " + page}
+              />
+            </div>
           </div>
           {rendering && <p role="status">Rendering page…</p>}
         </>
@@ -234,5 +301,49 @@ export function PdfResumePreview({
         <pre>{text}</pre>
       </details>
     </section>
+  );
+}
+
+function PdfThumbnail({
+  pdf,
+  number,
+  selected,
+  onSelect,
+}: {
+  pdf: PDFDocumentProxy;
+  number: number;
+  selected: boolean;
+  onSelect: () => void;
+}) {
+  const ref = useRef<HTMLCanvasElement>(null);
+  useEffect(() => {
+    let active = true;
+    let task: RenderTask | undefined;
+    void pdf
+      .getPage(number)
+      .then(async (source) => {
+        if (!active || !ref.current) return;
+        const viewport = source.getViewport({ scale: 0.16 });
+        ref.current.width = viewport.width;
+        ref.current.height = viewport.height;
+        task = source.render({ canvas: ref.current, viewport });
+        await task.promise;
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+      task?.cancel();
+    };
+  }, [pdf, number]);
+  return (
+    <button
+      type="button"
+      aria-label={`Preview page ${number}`}
+      aria-current={selected ? "page" : undefined}
+      onClick={onSelect}
+    >
+      <canvas ref={ref} aria-hidden="true" />
+      <span>{number}</span>
+    </button>
   );
 }

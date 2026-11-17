@@ -143,9 +143,9 @@ async def check():
             await page.screenshot(path=str(output / "studio-light.png"))
             await page.set_viewport_size({"width": 390, "height": 844})
             await page.wait_for_timeout(200)
-            a = await left.bounding_box()
-            z = await right.bounding_box()
-            assert z["y"] > a["y"]
+            await page.get_by_role("button", name="Preview", exact=True).click()
+            assert not await left.is_visible()
+            assert await right.is_visible()
             assert await page.evaluate(
                 "document.documentElement.scrollWidth<=innerWidth+1"
             )
@@ -227,7 +227,7 @@ async def check():
             assert not errors, errors
             await b.close()
             print(
-                "PASS: editor left/PDF right, real PDF download, 1–2/4–5/12-page targets saved, short content not padded, draft edits refresh output, cancellation, 80/100% desktop and stacked mobile layouts."
+                "PASS: editor left/PDF right, real PDF download, 1–2/4–5/12-page targets saved, short content not padded, draft edits refresh output, cancellation, 80/100% desktop and mobile Editor/Preview layouts."
             )
 
 

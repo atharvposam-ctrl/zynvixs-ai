@@ -4,14 +4,19 @@ import io
 from pathlib import Path
 from xml.sax.saxutils import escape
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.pagesizes import A4, letter
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from pypdf import PdfReader
 
 
-def render(content, preference="1-2"):
-    limit = {"1-2": 2, "4-5": 5, "12": 12}.get(preference, 2)
+def render(content, preference="1-2", paper_size="a4", custom_pages=12):
+    try:
+        custom_pages = max(1, min(30, int(custom_pages)))
+    except (TypeError, ValueError):
+        custom_pages = 12
+    limit = {"1-2": 2, "4-5": 5, "12": 12, "custom": max(1, min(30, int(custom_pages)))}.get(preference, 2)
     base = {"1-2": 10.5, "4-5": 11, "12": 11.5}.get(preference, 10.5)
     font = next(
         (
@@ -62,12 +67,21 @@ def render(content, preference="1-2"):
         margin = 40 if preference == "1-2" else 46
         SimpleDocTemplate(
             buffer,
+            pagesize=letter if paper_size == "letter" else A4,
             leftMargin=margin,
             rightMargin=margin,
             topMargin=margin,
             bottomMargin=margin,
-        ).build(story)
+        ).build(story, onFirstPage=_page_number, onLaterPages=_page_number)
         output = buffer.getvalue()
         if len(PdfReader(io.BytesIO(output)).pages) <= limit:
             break
     return output
+
+
+def _page_number(canvas, document):
+    canvas.saveState()
+    canvas.setFont("Helvetica", 8)
+    canvas.setFillColorRGB(0.35, 0.35, 0.35)
+    canvas.drawRightString(document.pagesize[0] - document.rightMargin, 22, str(document.page))
+    canvas.restoreState()
